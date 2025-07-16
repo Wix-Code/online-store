@@ -1,6 +1,7 @@
 import React from 'react'
 import { stores } from '../dummyData'
 import { Search } from 'lucide-react'
+import LocationFilter from '../components/stores/LocationFilter'
 
 const page = () => {
   return (
@@ -12,6 +13,7 @@ const page = () => {
             <Search className='w-[18px]'/>
             <input type="text" placeholder="Search stores..." className='text-[15px] text-[#8b8b8b] outline-none font-[400] rounded w-full' />
           </div>
+          <LocationFilter />
         </div>
       </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>

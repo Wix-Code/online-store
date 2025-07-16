@@ -116,7 +116,7 @@ export const products = [
   }
 ]
 
-const locations: Locations[] = [
+export const locations: Locations[] = [
   {
     id: "1",
     name: "Lagos"
