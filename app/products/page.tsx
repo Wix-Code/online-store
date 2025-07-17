@@ -4,6 +4,7 @@ import { Filter, Heart, RefreshCw, Search, ShoppingCart, ZoomIn } from 'lucide-r
 import React, { useState } from 'react'
 import { products } from '../dummyData'
 import Link from 'next/link'
+import CardItem from '../components/CardItem'
 
 const page = () => {
   const [openFilter, setOpenFilter] = useState(false)
@@ -51,44 +52,11 @@ const page = () => {
         {/* Product Grid */}
         <div className={`flex-1 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 ${openFilter ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} xl:grid-cols-5 gap-4`}>
           {
-            products.map((item) => (
-              <div
-                key={item.id}
-                className="group cursor-pointer flex flex-col space-y-2 rounded mb-4"
-              >
-                <div className="flex gap-2">
-                  {/* Product Image */}
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-[200px] object-cover mb-2"
-                  />
-
-                  {/* Hover icons */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2 text-[#555555]">
-                    <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-                      <Heart className="w-[16px]" />
-                    </button>
-                    <button title="Add to compare" className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-                      <RefreshCw className="w-[16px]" />
-                    </button>
-                    <button className="cursor-pointer bg-[#fcfcfc] shadow p-1">
-                      <ZoomIn className="w-[18px]" />
-                    </button>
-                  </div>
-                </div>
-
-                <Link href={`/products/${item.id}`}>
-                  <h2 className="text-[14px] text-[#8b8b8b] border-b-[1px] w-fit border-[#e0e0e0] font-normal">
-                    {item.description.slice(0, 30)}...
-                  </h2>
-                </Link>
-                <p className="text-[14px] text-[#555555] font-[600]">₦{item.price}</p>
-                <button className='text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer'>
-                  <ShoppingCart className='w-[16px]' /> Add to cart
-                </button>
-              </div>
-            ))
+            products.map((item) => {
+              return (
+                <CardItem id={item.id} price={item.price} image={item.image} description={item.description} />
+              )
+            })
           }
         </div>
       </div>
