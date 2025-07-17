@@ -2,7 +2,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div className='max-w-[1000px] my-5 space-y-8 m-auto'>
+    <div className='max-w-[1000px] my-8 space-y-8 m-auto'>
       <div className='flex-1'>
         <img className='w-[50%]' src="https://pictures-nigeria.jijistatic.net/160598210_MzAwLTI3MC00NzlhY2Y4Yjdi.webp" alt="" />
       </div>
