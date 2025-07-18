@@ -2,7 +2,7 @@ import { products } from '@/app/dummyData'
 import React from 'react'
 import ItemCard from '../ItemCard'
 
-const TopSellingProducts = () => {
+const TopSellingStores = () => {
   return (
     <div>
       <p></p>
@@ -22,4 +22,4 @@ const TopSellingProducts = () => {
   )
 }
 
-export default TopSellingProducts
+export default TopSellingStores
