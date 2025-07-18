@@ -54,7 +54,7 @@ const page = () => {
           {
             products.map((item) => {
               return (
-                <CardItem id={item.id} price={item.price} image={item.image} description={item.description} />
+                <CardItem key={item.id} id={item.id} price={item.price} image={item.image} description={item.description} />
               )
             })
           }

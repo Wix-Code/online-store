@@ -18,7 +18,6 @@ const ItemCard = ({id, description, image, price} : Props) => {
         {/* Product Image */}
         <img
           src={image}
-          alt={name ?? ""}
           className="w-full h-[200px] object-cover mb-2"
         />
 

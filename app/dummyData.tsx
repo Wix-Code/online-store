@@ -237,3 +237,14 @@ export const locations: Locations[] = [
     name: "Owerri"
   }
 ]
+
+export const banner = [
+  {
+    id: 1,
+    image: "https://www.pricepally.com/_next/image?url=https%3A%2F%2Fpp-new-node-medusa-prod-bucket.s3.us-east-1.amazonaws.com%2FMagazine-1752689868054.jpg&w=750&q=75"
+  },
+  {
+    id: 2,
+    image: "https://www.pricepally.com/_next/image?url=https%3A%2F%2Fpp-new-node-medusa-prod-bucket.s3.us-east-1.amazonaws.com%2FWeb%20Rewards%20_%20Small-1738683960502-1749471852660.jpg&w=750&q=75"
+  },
+]
