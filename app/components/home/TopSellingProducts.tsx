@@ -12,7 +12,7 @@ const TopSellingProducts = () => {
           {
             products.map((item) => {
               return (
-                <ItemCard key={item.id} id={item.id} price={item.price} image={item.image} description={item.description} />
+                <ItemCard key={item.id} id={item.id} price={item.price} image={item.image}      description={item.description} />
               )
             })
           }
