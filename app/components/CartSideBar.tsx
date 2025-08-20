@@ -114,7 +114,7 @@ const CartSideBar = ({ isOpen, close }: Props) => {
                   <p className='text-[16px] text-[#009c6dfa] font-[600]'>₦34,000</p>
                 </div>
                 <Link href="/cart">
-                  <button className='uppercase cursor-pointer bg-[#f5f5f5] py-2.5 w-full text-[#555555] text-[12px]'>View cart</button>
+                  <button onClick={close} className='uppercase cursor-pointer bg-[#f5f5f5] py-2.5 w-full text-[#555555] text-[12px]'>View cart</button>
                 </Link>
                 <button className='uppercase mt-3 cursor-pointer bg-[#009c6dfa] py-2.5 w-full text-white text-[12px]'>CheckOut</button>
               </div>

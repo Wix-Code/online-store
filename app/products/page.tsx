@@ -27,10 +27,8 @@ const page = () => {
         </div>
       </div>
 
-      {/* Main Content with Slide-in Filter */}
       <div className={`flex transition-all duration-300 mt-4 ${openFilter ? 'gap-4' : ''}`}>
         
-        {/* Filter Panel */}
         <div style={{boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"}}
           className={`transition-all duration-300 ease-in-out ${
             openFilter ? 'w-[260px]' : 'w-0'
@@ -38,7 +36,6 @@ const page = () => {
         >
           {openFilter && (
             <div className="h-full bg-[#fafafa] p-4">
-              {/* Your filter content */}
               <h2 className='text-lg font-bold mb-4'>Filters</h2>
               <p>Put your filter UI here</p>
               <div className='flex bg-white rounded-[4px] items-center px-3 h-[46px] text-[#8b8b8b] border-[1px] border-[#f5f5f5] gap-2'>
@@ -49,8 +46,7 @@ const page = () => {
           )}
         </div>
 
-        {/* Product Grid */}
-        <div className={`flex-1 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 ${openFilter ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} xl:grid-cols-5 gap-4`}>
+        <div className={`flex-1 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 ${openFilter ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4`}>
           {
             products.map((item) => {
               return (
