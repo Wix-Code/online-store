@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { products } from '../dummyData'
 import Link from 'next/link'
 import CardItem from '../components/CardItem'
+import SearchInput from '../components/SearchInput'
 
 const page = () => {
   const [openFilter, setOpenFilter] = useState(false)
@@ -38,10 +39,10 @@ const page = () => {
             <div className="h-full bg-[#fafafa] p-4">
               <h2 className='text-lg font-bold mb-4'>Filters</h2>
               <p>Put your filter UI here</p>
-              <div className='flex bg-white rounded-[4px] items-center px-3 h-[46px] text-[#8b8b8b] border-[1px] border-[#f5f5f5] gap-2'>
-                <Search className='w-[18px]'/>
-                <input type="text" placeholder="Search products..." className='text-[14px] text-[#8b8b8b] outline-none font-[400] rounded flex-1' />
-              </div>
+              <SearchInput
+                value=''
+                onChange={() => {}}
+              />
             </div>
           )}
         </div>

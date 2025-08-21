@@ -3,6 +3,7 @@ import { stores } from '../dummyData'
 import { Search } from 'lucide-react'
 import LocationFilter from '../components/stores/LocationFilter'
 import Link from 'next/link'
+import SearchInput from '../components/SearchInput'
 
 const page = () => {
   return (
@@ -10,10 +11,10 @@ const page = () => {
       <div className='flex justify-between items-center mb-6'>
         <h1 className='text-2xl font-bold mb-4'>Stores</h1>
         <div className='items-center flex gap-4'>
-          <div className='w-[300px] flex rounded-[4px] items-center px-3 h-[46px] text-[#8b8b8b] border-[1px] border-[#f5f5f5] gap-2'>
-            <Search className='w-[18px]'/>
-            <input type="text" placeholder="Search stores..." className='text-[14px] text-[#8b8b8b] outline-none font-[400] rounded w-full' />
-          </div>
+          <SearchInput
+            value=''
+            onChange={() => {}}
+          />
           <LocationFilter />
         </div>
       </div>

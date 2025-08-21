@@ -16,6 +16,11 @@ type Locations = {
   name: string;
 }
 
+type Sort = {
+  id: string;
+  name: string;
+}
+
 export const stores: Store[] = [
   {
     id: 1,
@@ -247,4 +252,23 @@ export const banner = [
     id: 2,
     image: "https://www.pricepally.com/_next/image?url=https%3A%2F%2Fpp-new-node-medusa-prod-bucket.s3.us-east-1.amazonaws.com%2FWeb%20Rewards%20_%20Small-1738683960502-1749471852660.jpg&w=750&q=75"
   },
+]
+
+export const sort: Sort[] = [
+  {
+    id: "1",
+    name: "Recommended"
+  },
+  {
+    id: "2",
+    name: "Newest"
+  },
+  {
+    id: "3",
+    name: "Lowest Price"
+  },
+  {
+    id: "4",
+    name: "Highest Price"
+  }
 ]
