@@ -10,7 +10,7 @@ type Props = {
 };
 
 // Utility to slugify description safely
-const slugify = (text: string) => {
+export const slugify = (text: string) => {
   if (!text) return "";
   return text
     .toLowerCase()

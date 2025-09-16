@@ -3,14 +3,8 @@
 import { useGetProductById } from "@/app/api/products";
 import { Heart, Minus, Plus, RefreshCw } from "lucide-react";
 
-type Props = {
-  params: {
-    slug: string;
-  };
-};
-
-export default function SingleItem({ params }: Props) {
-  // params.slug looks like "2-red-palm-oil"
+export default function SingleItem({ params }: { params: { slug: string } }) {
+  // slug looks like "2-original-fresh-red-palm-oil"
   const productId = Number(params.slug.split("-")[0]);
 
   const { data, isLoading, error } = useGetProductById(productId);
@@ -24,8 +18,6 @@ export default function SingleItem({ params }: Props) {
   }
 
   const product = data.product;
-  console.log(data, "data");
-  console.log(product, "product");
 
   return (
     <div className="p-6">

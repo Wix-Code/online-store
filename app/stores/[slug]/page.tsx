@@ -1,5 +1,6 @@
 "use client"
 
+import { useGetStoreById } from '@/app/api/stores'
 import SearchInput from '@/app/components/SearchInput'
 import SortFilter from '@/app/components/SortFilter'
 import { products } from '@/app/dummyData'
@@ -7,9 +8,28 @@ import { Heart, Link, MapPin, RefreshCw, Search, ShoppingCart, ZoomIn } from 'lu
 import React from 'react'
 import {FaWhatsapp} from "react-icons/fa"
 
+type Props = {
+  params: {
+    slug: string;
+  };
+};
 
-const page = () => {
-  
+const page = ({ params }: Props) => {
+  const storeId = Number(params.slug.split("-")[0]);
+
+  const { data, isLoading, error } = useGetStoreById(storeId);
+
+  if (isLoading) {
+    return <p className="text-center">Loading...</p>;
+  }
+
+  if (error || !data) {
+    return <p className="text-center text-red-500">Store not found</p>;
+  }
+
+  const store = data.store;
+  console.log(data, "data");
+  console.log(store, "store");
   return (
     <div className='max-w-[1000px] mt-8 space-y-4 m-auto'>
       <div className='flex items-center justify-between'>
@@ -25,8 +45,8 @@ const page = () => {
       <div className='gap-4 flex'>
         <div className='flex-[25%] space-y-4'>
           <div style={{boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"}} className='flex-[25%] bg-[#fafafa] border-[1px] flex justify-center items-center space-y-2 flex-col p-5 border-[#f5f5f5]'>
-            <img className='w-[100] h-[100px] object-cover rounded-[50%]' src="https://www.themarketfoodshop.com/wp-content/uploads/2018/04/buy-kidney-beans-online-212x212.jpg" alt="" />
-            <p className='text-[16px] font-[600]'>Ugo's Farms Ltd</p>
+            <img className='w-[100] h-[100px] object-cover rounded-[50%]' src={store.imageUrl} alt="" />
+            <p className='text-[16px] font-[600]'>{store.name}</p>
             <p className='text-[12px] font-[400]'>6y 1m on Jiji</p>
           </div>
           <div className='space-y-2'>
@@ -51,13 +71,13 @@ const page = () => {
           </div>
           <div style={{boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"}} className='flex flex-col bg-white rounded-[4px] p-3 text-[#8b8b8b] border-[1px] border-[#f5f5f5] space-y-2'>
             <p className='text-[16px] font-[500]'>About Seller</p>
-            <p className='text-[14px] text-black font-[400]'>For All kinds Of Gym,Salon & Spa Equipment. Providing State Of The Art On Sports,Saloon & Spa</p>
+            <p className='text-[14px] text-black font-[400]'>{store.description}</p>
           </div>        
         </div>
         <div className='flex-[75%]'>
           <div className='grid grid-cols-1 bg-white sm:grid-cols-2 lg:grid-cols-3 gap-4'>
             {
-              products.map((item) => {
+              store.products.map((item : any) => {
                 return (
                   <div
                     key={item.id}
@@ -66,7 +86,7 @@ const page = () => {
                     <div className="flex gap-2">
                       {/* Product Image */}
                       <img
-                        src={item.image}
+                        src={item.imageUrl}
                         alt={item.name}
                         className="w-full h-[200px] object-cover mb-2"
                       />
@@ -92,7 +112,7 @@ const page = () => {
                     </h2>
                   
                     <p className="text-[14px] text-[#009c6dfa] font-[600]">₦{item.price}</p>
-                    <button className='text-[14px] text-black flex items-center gap-1 font-[600] cursor-pointer'><MapPin className='w-[16px]' /> Abuja, FCT</button>
+                    <button className='text-[14px] text-black flex items-center gap-1 font-[600] cursor-pointer'><MapPin className='w-[16px]' />{item.location || "Abuja, FCT"}</button>
                   </div>
                 )
               })
