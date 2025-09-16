@@ -15,6 +15,11 @@ export const getAllProducts = async ({ pageParam = 1, params }: { pageParam?: nu
   return res.data;
 };
 
+export const getProductById = async (id: number) => {
+  const res = await customAxiosInstance.get(`/products/${id}`);
+  return res.data;
+};
+
 export const updateProduct = async (id: number, data: CreateProductRequest) => {
   return await customAxiosInstance.put(`/products/${id}`, data)
 }

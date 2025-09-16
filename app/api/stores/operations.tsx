@@ -22,3 +22,8 @@ export const updateStore = async (id: number, data: CreateStoreRequest) => {
 export const deleteStore = async (id: number, data: CreateStoreRequest) => {
   return await customAxiosInstance.delete(`/stores/${id}`, { data })
 }
+
+export const getStoreById = async (id: number) => {
+  const res = await customAxiosInstance.get(`/stores/${id}`);
+  return res.data;
+};

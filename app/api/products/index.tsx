@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateProductRequest } from "./types";
-import { createProduct, deleteProduct, getAllProducts, updateProduct } from "./operations";
+import { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct } from "./operations";
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
@@ -26,6 +26,14 @@ export const useGetAllProducts = (params: any) => {
       }
       return undefined;
     },
+  });
+};
+
+export const useGetProductById = (id: number) => {
+  return useQuery({
+    queryKey: ["product", id],
+    queryFn: () => getProductById(id),
+    enabled: !!id, // only run if id exists
   });
 };
 

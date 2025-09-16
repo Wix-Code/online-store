@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createStore, deleteStore, getAllStores, updateStore } from "./operations";
+import { createStore, deleteStore, getAllStores, getStoreById, updateStore } from "./operations";
 import { CreateStoreRequest } from "./types";
 
 export const useCreateStore = () => {
@@ -54,5 +54,13 @@ export const useDeleteStore = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["stores"] });
     },
+  });
+};
+
+export const useGetStoreById = (id: number) => {
+  return useQuery({
+    queryKey: ["store", id],
+    queryFn: () => getStoreById(id),
+    enabled: !!id, // only run if id exists
   });
 };

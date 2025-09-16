@@ -8,8 +8,15 @@ import CardItem from '../components/CardItem'
 import SearchInput from '../components/SearchInput'
 import SortFilter from '../components/SortFilter'
 import LocationFilter from '../components/stores/LocationFilter'
+import { useGetAllProducts } from '../api/products'
 
 const page = () => {
+  const { data, fetchNextPage, isLoading, isFetching, hasNextPage, isFetchingNextPage } = useGetAllProducts({ search: undefined, sort: "newest", location: undefined });
+
+  const products = data?.pages?.flatMap(page => page.data.products) || [];
+  console.log(products, "products");
+
+  console.log("data:", data);
   const [openFilter, setOpenFilter] = useState(false)
 
   const handleOpen = () => {
@@ -50,14 +57,35 @@ const page = () => {
           )}
         </div>
 
-        <div className={`flex-1 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 ${openFilter ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4`}>
-          {
-            products.map((item) => {
-              return (
-                <CardItem key={item.id} id={item.id} price={item.price} image={item.image} description={item.description} />
-              )
-            })
-          }
+         <div
+          className={`flex-1 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 ${
+            openFilter ? "lg:grid-cols-3" : "lg:grid-cols-4"
+          } gap-4`}
+        >
+          {isLoading || isFetching ? (
+            // 👇 Loading state (skeletons or spinner)
+            Array.from({ length: 8 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-48 w-full bg-gray-200 animate-pulse rounded-lg"
+              />
+            ))
+          ) : products.length > 0 ? (
+            products.map((item) => (
+              <CardItem
+                key={item.id}
+                id={item.id}
+                price={item.price}
+                image={item.imageUrl}
+                description={item.description}
+              />
+            ))
+          ) : (
+            // 👇 Empty state
+            <p className="text-gray-500 text-sm col-span-full text-center">
+              No products found
+            </p>
+          )}
         </div>
       </div>
     </div>

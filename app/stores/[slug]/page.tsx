@@ -9,6 +9,7 @@ import {FaWhatsapp} from "react-icons/fa"
 
 
 const page = () => {
+  
   return (
     <div className='max-w-[1000px] mt-8 space-y-4 m-auto'>
       <div className='flex items-center justify-between'>
