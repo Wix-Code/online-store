@@ -16,10 +16,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 }) => {
   return (
     <div
-      style={{
-        boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px",
-      }}
-      className={`flex bg-white rounded-[4px] items-center px-3 h-[46px] text-[#8b8b8b] border-[1px] border-[#f5f5f5] gap-2 ${className}`}
+      className={`flex bg-white rounded-[4px] items-center px-3 h-[46px] text-[#8b8b8b] border-[1px] border-[#00000] gap-2 ${className}`}
     >
       <Search className="w-[18px]" />
       <input

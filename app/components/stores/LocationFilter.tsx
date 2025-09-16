@@ -46,10 +46,10 @@ const LocationFilter = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="flex justify-between items-center w-full md:w-60 bg-white border rounded-[4px] px-[12px] h-[46px] text-left border-[#f5f5f5]">
+        <button className="flex cursor-pointer justify-between items-center bg-white border rounded-[4px] px-[12px] h-[46px] text-left border-[#00000]">
           <div className="flex gap-[14px] items-center overflow-hidden max-w-[calc(100vw-80px)]">
             <span className="text-[#5F6370] whitespace-nowrap text-[12px] font-[400] tracking-[-0.24px]">
-              {selectedTypes.length > 0 ? "Type" : "Select type"}
+              {selectedTypes.length > 0 ? "Location(s)" : "Select Location(s)"}
             </span>
             <span className="text-[#1E1E1E] text-[12px] font-[600] tracking-[-0.24px] overflow-hidden whitespace-nowrap text-ellipsis">
               {selectedLabels}

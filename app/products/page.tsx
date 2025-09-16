@@ -6,6 +6,8 @@ import { products } from '../dummyData'
 import Link from 'next/link'
 import CardItem from '../components/CardItem'
 import SearchInput from '../components/SearchInput'
+import SortFilter from '../components/SortFilter'
+import LocationFilter from '../components/stores/LocationFilter'
 
 const page = () => {
   const [openFilter, setOpenFilter] = useState(false)
@@ -36,13 +38,14 @@ const page = () => {
           } overflow-hidden`}
         >
           {openFilter && (
-            <div className="h-full bg-[#fafafa] p-4">
+            <div className="h-full flex flex-col gap-2 bg-[#fafafa] p-4">
               <h2 className='text-lg font-bold mb-4'>Filters</h2>
-              <p>Put your filter UI here</p>
               <SearchInput
                 value=''
                 onChange={() => {}}
               />
+              <SortFilter />
+              <LocationFilter />
             </div>
           )}
         </div>
