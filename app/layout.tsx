@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "./components/NavBar";
 import { ReactNode } from "react";
 import { Providers } from "./hooks/queryClient";
+import Footer from "./components/Footer";
 
 // Fonts
 const poppins = Poppins({
@@ -28,6 +29,7 @@ export default function RootLayout({
         <Providers>
           <NavBar />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

@@ -55,7 +55,7 @@ const CardItem = ({ id, description, image, price }: Props) => {
         </h2>
       </Link>
 
-      <p className="text-[14px] text-[#555555] font-[600]">₦{price}</p>
+      <p className="text-[14px] text-[#555555] font-[600]">₦{price.toLocaleString()}</p>
       <button className="text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer">
         <ShoppingCart className="w-[16px]" /> Add to cart
       </button>
