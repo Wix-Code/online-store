@@ -3,15 +3,16 @@
 import { useGetProductById } from "@/app/api/products";
 import ItemCard from "@/app/components/ItemCard";
 import { products } from "@/app/dummyData";
-import { Eye, Heart, Locate, MapPin, Minus, Plus, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { Eye, Heart, MapPin } from "lucide-react";
+import { useState, use } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 
-export default function SingleItem({ params }: { params: { slug: string } }) {
-
+export default function SingleItem({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = use(params);
   const [showContact, setShowContact] = useState(false);
+  
   // slug looks like "2-original-fresh-red-palm-oil"
-  const productId = Number(params.slug.split("-")[0]);
+  const productId = Number(resolvedParams.slug.split("-")[0]);
 
   const { data, isLoading, error } = useGetProductById(productId);
 
@@ -85,20 +86,6 @@ export default function SingleItem({ params }: { params: { slug: string } }) {
               ₦{product.price.toLocaleString()}
             </p>
           </div>
-          {/* <div className="items-center gap-2 flex">
-            <div className="flex py-2.5 items-center gap-2">
-              <button className="h-[40px] px-2.5 bg-[#fcfcfc] border border-[#f5f5f5]">
-                <Minus className="w-[12px]" />
-              </button>
-              <p className="text-[#555555] text-[14px]">0</p>
-              <button className="h-[40px] px-2.5 bg-[#fcfcfc] border border-[#f5f5f5]">
-                <Plus className="w-[12px]" />
-              </button>
-            </div>
-            <button className="text-white uppercase bg-black px-5.5 h-[40px] text-[12px] font-[400]">
-              Add to cart
-            </button>
-          </div> */}
           <div
             style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px" }}
             className="w-full bg-[#fafafa] border flex space-y-2 flex-col p-4 border-[#f5f5f5]"
@@ -144,12 +131,6 @@ export default function SingleItem({ params }: { params: { slug: string } }) {
           <div className="w-full bg-[#fafafa] border flex space-y-2 flex-col p-4 border-[#f5f5f5]">
             <button className="w-full h-[46px] border-green-500 cursor-pointer border-[1px] rounded-[8px] gap-2 bg-white text-[#555555] hover:text-white hover:bg-green-500 transition">Post Product</button>
           </div>
-          {/* <button className="text-[#555555] flex gap-2 items-center text-[12px]">
-            <Heart className="w-[16px]" /> Add to wishlist
-          </button>
-          <button className="text-[#555555] flex gap-2 items-center text-[12px]">
-            <RefreshCw className="w-[16px]" /> Add to compare
-          </button> */}
         </div>
       </div>
     </div>

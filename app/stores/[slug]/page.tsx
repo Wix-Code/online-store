@@ -5,18 +5,19 @@ import SearchInput from "@/app/components/SearchInput";
 import SortFilter from "@/app/components/SortFilter";
 import { Heart, MapPin, RefreshCw, ZoomIn } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import React from "react";
+import React, { use } from "react";
 import { slugify } from "@/app/components/CardItem";
 import Link from "next/link";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 const Page = ({ params }: Props) => {
-  const storeId = Number(params.slug.split("-")[0]);
+  const resolvedParams = use(params);
+  const storeId = Number(resolvedParams.slug.split("-")[0]);
 
   const { data, isLoading, error } = useGetStoreById(storeId);
 
