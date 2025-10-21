@@ -16,9 +16,9 @@ const NavBar = () => {
   return (
     <div
       style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 2px 0px" }}
-      className="sticky top-0 z-50"
+      className="sticky top-0 bg-[#fdfdfd] z-50"
     >
-      <div className="flex bg-[#fdfdfd] justify-between items-center max-w-[1200px] m-auto py-3">
+      <div className="flex bg-[#fdfdfd] justify-between items-center max-w-[1200px] m-auto h-[60px]">
         {/* Logo */}
         <div>
           <Link href="/">
@@ -61,14 +61,14 @@ const NavBar = () => {
                        group-hover:opacity-100 group-hover:scale-100 group-hover:visible
                        transition-all duration-300 rounded-lg"
             >
-              <div className="flex cursor-pointer items-center gap-4 hover:text-[#009c6dfa]">
+              <Link href="/stores" className="flex cursor-pointer items-center gap-4 hover:text-[#009c6dfa]">
                 <ShoppingBag />
                 My shop
-              </div>
-              <div className="flex cursor-pointer items-center gap-4 hover:text-[#009c6dfa]">
+              </Link>
+              <Link href="/setting" className="flex cursor-pointer items-center gap-4 hover:text-[#009c6dfa]">
                 <Settings />
                 Settings
-              </div>
+              </Link>
               <div className="flex cursor-pointer items-center gap-4 hover:text-[#009c6dfa]">
                 <LogOut />
                 Logout
