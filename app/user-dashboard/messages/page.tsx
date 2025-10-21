@@ -28,6 +28,14 @@ const conversations = [
   },
 ];
 
+const shortMessage = [
+  "Last Price",
+  "Is it still avalaible?",
+  "Can I call you?",
+  "Where are you located?",
+  "Can you deliver?",
+];
+
 const MessagesPage = () => {
   const [selectedChat, setSelectedChat] = useState(conversations[0]);
   const [message, setMessage] = useState("");
@@ -140,8 +148,22 @@ const MessagesPage = () => {
             </div>
 
             {/* Input */}
-            <div className="px-3 h-[80px] border-t-[1px] border-gray-200 flex items-center gap-2 bg-white">
-              <input
+            <div className="p-3 flex-col border-t-[1px] border-gray-200 flex items-center gap-2 bg-white">
+              <div className="flex gap-3 items-center">
+                {
+                  shortMessage.map((text, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setMessage(text)}
+                      className="text-sm cursor-pointer rounded-[30px] bg-white py-3 px-5 border-[1px] border-green-500 text-gray-500 hover:text-gray-700"
+                    >
+                      {text}
+                    </button>
+                  ))
+                }
+              </div>
+              <div className="flex items-center gap-2 w-full">
+                <input
                 type="text"
                 placeholder="Type your message..."
                 value={message}
@@ -154,6 +176,7 @@ const MessagesPage = () => {
               >
                 <Send size={18} />
               </button>
+              </div>
             </div>
           </>
         ) : (
