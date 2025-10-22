@@ -1,67 +1,129 @@
-import { Heart, Link, RefreshCw, Search, ShoppingCart, ZoomIn } from 'lucide-react'
-import React from 'react'
-import { products } from '../dummyData'
+"use client";
 
-const page = () => {
+import React from "react";
+import { motion } from "framer-motion";
+import { Users, ShieldCheck, ShoppingBag, Globe } from "lucide-react";
+
+const AboutPage = () => {
   return (
-    <div className='max-w-[1000px] mt-10 gap-4 flex m-auto'>
-      <div className='flex-[25%] space-y-4'>
-        <div style={{boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"}} className='flex-[25%] bg-[#fafafa] border-[1px] flex justify-center items-center space-y-2 flex-col p-5 border-[#f5f5f5]'>
-          <img className='w-[100] h-[100px] object-cover rounded-[50%]' src="https://www.themarketfoodshop.com/wp-content/uploads/2018/04/buy-kidney-beans-online-212x212.jpg" alt="" />
-          <p className='text-[14px] font-[600]'>Ugo's Farms Ltd</p>
-        </div>
-        <div style={{boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"}} className='flex bg-white rounded-[4px] items-center px-3 h-[46px] text-[#8b8b8b] border-[1px] border-[#f5f5f5] gap-2'>
-          <Search className='w-[18px]'/>
-          <input type="text" placeholder="Search products..." className='text-[14px] text-[#8b8b8b] outline-none font-[400] rounded flex-1' />
-        </div>
-      </div>
-      <div className='flex-[75%]'>
-        <div className='grid grid-cols-1 bg-white sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-          {
-            products.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  className="group flex flex-col gap-2 cursor-pointer space-y-2 rounded mb-4"
-                >
-                  <div className="flex gap-2">
-                    {/* Product Image */}
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-[200px] object-cover mb-2"
-                    />
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-green-700 to-emerald-500 text-white py-20 px-6 text-center">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl md:text-5xl font-bold"
+        >
+          About <span className="text-yellow-300">Venyers</span>
+        </motion.h1>
+        <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-100">
+          Empowering local buyers and sellers with a trusted, simple, and fast
+          online marketplace experience.
+        </p>
+      </section>
 
-                    {/* Hover icons */}
-                    <div
-                      className=" opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2 text-[#555555]"
-                    >
-                      <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-                        <Heart className="w-[16px]" />
-                      </button>
-                      <button title="Add to compare" className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-                        <RefreshCw className="w-[16px]" />
-                      </button>
-                      <button className="cursor-pointer bg-[#fcfcfc] shadow p-1">
-                        <ZoomIn className="w-[18px]" />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <h2 className="text-[14px] text-[#8b8b8b] border-b-[1px] w-fit border-[#e0e0e0] font-normal">
-                    {item.description.slice(0, 30)}...
-                  </h2>
-                 
-                  <p className="text-[14px] text-[#009c6dfa] font-[600]">₦{item.price}</p>
-                  <button className='text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer'><ShoppingCart className='w-[16px]' /> Add to cart</button>
-                </div>
-              )
-            })
-          }
+      {/* Mission & Story */}
+      <section className="py-16 px-6 md:px-16 bg-white">
+        <div className="max-w-5xl mx-auto space-y-10">
+          <div>
+            <h2 className="text-3xl font-bold mb-3 text-gray-800">Our Story</h2>
+            <p className="text-gray-600 leading-relaxed">
+              Venyers was born out of a vision to bridge the gap between buyers
+              and sellers across Africa, starting from Nigeria. We realized how
+              difficult it can be for people to find trusted products and
+              services locally — so we built Venyers to make trading simple,
+              safe, and fast.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-3xl font-bold mb-3 text-gray-800">Our Mission</h2>
+            <p className="text-gray-600 leading-relaxed">
+              To create a digital marketplace that connects millions of people,
+              helping small businesses grow while offering buyers quality and
+              trust in every transaction.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-3xl font-bold mb-3 text-gray-800">Our Vision</h2>
+            <p className="text-gray-600 leading-relaxed">
+              To be Africa’s most trusted and innovative online marketplace,
+              where trade meets transparency and opportunity.
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Values */}
+      <section className="bg-gray-100 py-16 px-6 md:px-16">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-10 text-gray-800">
+            Our Core Values
+          </h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <ShieldCheck className="w-10 h-10 mx-auto text-green-600 mb-4" />
+              <h3 className="font-semibold text-lg">Trust</h3>
+              <p className="text-gray-500 text-sm mt-2">
+                Every transaction on Venyers is secure and verified to ensure
+                peace of mind for both buyers and sellers.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <ShoppingBag className="w-10 h-10 mx-auto text-green-600 mb-4" />
+              <h3 className="font-semibold text-lg">Simplicity</h3>
+              <p className="text-gray-500 text-sm mt-2">
+                A simple interface that helps you buy and sell anything easily,
+                without stress or confusion.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <Users className="w-10 h-10 mx-auto text-green-600 mb-4" />
+              <h3 className="font-semibold text-lg">Community</h3>
+              <p className="text-gray-500 text-sm mt-2">
+                Venyers is more than a marketplace — it’s a growing network of
+                people supporting each other.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <Globe className="w-10 h-10 mx-auto text-green-600 mb-4" />
+              <h3 className="font-semibold text-lg">Innovation</h3>
+              <p className="text-gray-500 text-sm mt-2">
+                We continuously improve our technology to bring a better trading
+                experience to everyone.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section className="py-20 px-6 md:px-16 bg-white text-center">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">
+          Get in Touch
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+          Have questions or feedback? We’d love to hear from you.  
+          Reach out to us via email or social platforms below.
+        </p>
+        <div className="flex justify-center space-x-6 text-green-600 font-medium">
+          <a href="mailto:support@venyers.com" className="hover:underline">
+            support@venyers.com
+          </a>
+          <span>|</span>
+          <a href="#" className="hover:underline">
+            Twitter
+          </a>
+          <span>|</span>
+          <a href="#" className="hover:underline">
+            Instagram
+          </a>
+        </div>
+      </section>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default AboutPage;
