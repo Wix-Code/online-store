@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import DashboardLayout from "../components/DashboardLayout";
 import { Users } from "lucide-react";
+import DashboardLayout from "@/app/components/DashboardLayout";
 
 const Followers = () => {
   const [activeTab, setActiveTab] = useState<"followers" | "following">("followers");

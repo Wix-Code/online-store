@@ -7,11 +7,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   const links = [
-    { href: "/setting", label: "User Details" },
+    { href: "/user-dashboard/setting", label: "User Details" },
     { href: "/user-dashboard/post", label: "Post Product" },
-    { href: "/user-dashboard/edit-store", label: "Store" },
+    { href: "/user-dashboard/store", label: "Store" },
     { href: "/user-dashboard/products", label: "Products" },
-    { href: "/followers", label: "Followers" },
+    { href: "/user-dashboard/followers", label: "Followers" },
     { href: "/user-dashboard/notifications", label: "Notifications" },
     { href: "/user-dashboard/messages", label: "Messages" },
   ];
