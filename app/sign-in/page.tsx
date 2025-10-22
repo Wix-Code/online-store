@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 const SignInPage = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,48 +33,47 @@ const SignInPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label className="block text-sm font-medium text-gray-600 mb-1">
               Email Address
             </label>
             <input
-              id="email"
-              name="email"
               type="email"
+              name="email"
+              placeholder="example@email.com"
               value={form.email}
               onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
-              className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your email"
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
               Password
             </label>
             <input
-              id="password"
+              type={showPassword ? "text" : "password"}
               name="password"
-              type="password"
+              placeholder="********"
               value={form.password}
               onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
-              className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute cursor-pointer right-3 top-9 text-gray-500"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           <div className="flex items-center justify-between text-sm">
             <button
               type="button"
               onClick={() => router.push("/forgot-password")}
-              className="text-blue-600 hover:underline"
+              className="text-green-600 cursor-pointer hover:underline"
             >
               Forgot password?
             </button>
@@ -80,21 +81,21 @@ const SignInPage = () => {
 
           <button
             type="submit"
-            className="w-full py-3 mt-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all"
+            className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition"
           >
             Sign In
           </button>
         </form>
 
         <div className="mt-6 flex items-center justify-center">
-          <span className="w-1/5 border-b border-gray-300"></span>
+          <span className="w-full border-b border-gray-300"></span>
           <span className="text-gray-500 text-sm mx-2">or</span>
-          <span className="w-1/5 border-b border-gray-300"></span>
+          <span className="w-full border-b border-gray-300"></span>
         </div>
 
         <button
           onClick={handleGoogleLogin}
-          className="mt-6 w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl hover:bg-gray-100 transition-all"
+          className="mt-6 w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl cursor-pointer hover:bg-gray-100 transition-all"
         >
           <FcGoogle size={24} />
           <span className="text-gray-700 font-medium">Continue with Google</span>
@@ -104,7 +105,7 @@ const SignInPage = () => {
           Don’t have an account?{" "}
           <button
             onClick={() => router.push("/sign-up")}
-            className="text-blue-600 hover:underline font-medium"
+            className="text-green-600 cursor-pointer hover:underline font-medium"
           >
             Sign Up
           </button>

@@ -42,7 +42,7 @@ const SignupPage = () => {
         {/* Google Login */}
         <button
           onClick={handleGoogleSignup}
-          className="w-full border border-gray-300 hover:bg-gray-50 transition py-2.5 rounded-lg flex items-center justify-center gap-2 text-gray-700 font-medium"
+          className="w-full cursor-pointer border border-gray-300 hover:bg-gray-50 transition py-2.5 rounded-lg flex items-center justify-center gap-2 text-gray-700 font-medium"
         >
           <FcGoogle size={22} />
           Sign up with Google
@@ -66,7 +66,7 @@ const SignupPage = () => {
               placeholder="John Doe"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
             />
           </div>
@@ -81,7 +81,7 @@ const SignupPage = () => {
               placeholder="example@email.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
             />
           </div>
@@ -96,13 +96,13 @@ const SignupPage = () => {
               placeholder="********"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-gray-500"
+              className="absolute right-3 cursor-pointer top-9 text-gray-500"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -110,7 +110,7 @@ const SignupPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition"
+            className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition"
           >
             Sign Up
           </button>
