@@ -119,10 +119,10 @@ const SignupPage = () => {
         <p className="text-sm text-gray-600 mt-6 text-center">
           Already have an account?{" "}
           <span
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/sign-in")}
             className="text-green-600 cursor-pointer font-semibold hover:underline"
           >
-            Log in
+            Sign In
           </span>
         </p>
       </div>
