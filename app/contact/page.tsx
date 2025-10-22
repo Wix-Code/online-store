@@ -65,7 +65,7 @@ const ContactPage = () => {
               </label>
               <input
                 type="text"
-                className="border border-gray-200 px-4 py-2.5 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                className="border border-gray-200 px-4 py-2.5 w-full rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 transition"
                 placeholder="John Doe"
               />
             </div>
@@ -76,7 +76,7 @@ const ContactPage = () => {
               </label>
               <input
                 type="email"
-                className="border border-gray-200 px-4 py-2.5 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                className="border border-gray-200 px-4 py-2.5 w-full rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 transition"
                 placeholder="you@example.com"
               />
             </div>
@@ -87,7 +87,7 @@ const ContactPage = () => {
               </label>
               <input
                 type="text"
-                className="border border-gray-200 px-4 py-2.5 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                className="border border-gray-200 px-4 py-2.5 w-full rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 transition"
                 placeholder="Order issue, refund, inquiry..."
               />
             </div>
@@ -97,7 +97,7 @@ const ContactPage = () => {
                 Message
               </label>
               <textarea
-                className="border border-gray-200 p-3 w-full rounded-md resize-none h-[160px] focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                className="border border-gray-200 p-3 w-full rounded-md resize-none h-[160px] focus:outline-none focus:ring-1 focus:ring-green-500 transition"
                 placeholder="Write your message here..."
               ></textarea>
             </div>
