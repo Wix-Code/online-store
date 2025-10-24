@@ -28,9 +28,9 @@ const ItemCard = ({id, description, image, price} : Props) => {
           <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
             <Heart className="w-[16px]" />
           </button>
-          <button title="Add to compare" className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
+          {/* <button title="Add to compare" className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
             <RefreshCw className="w-[16px]" />
-          </button>
+          </button> */}
           <button className="cursor-pointer bg-[#fcfcfc] shadow p-1">
             <ZoomIn className="w-[18px]" />
           </button>
@@ -43,7 +43,7 @@ const ItemCard = ({id, description, image, price} : Props) => {
       </h2>
       </Link>
       <p className="text-[14px] text-[#009c6dfa] font-[600]">₦{price}</p>
-      <button className='text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer'><ShoppingCart className='w-[16px]' /> Add to cart</button>
+      {/* <button className='text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer'><ShoppingCart className='w-[16px]' /> Add to cart</button> */}
     </div>
   )
 }
