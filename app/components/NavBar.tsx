@@ -15,13 +15,14 @@ import {
   X,
 } from "lucide-react";
 import { navLinks } from "../dummyData";
+import { motion, AnimatePresence } from "framer-motion";
 
 const NavBar = () => {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  // Simulate auth
-  const user = { id: null, name: "Wisdom" }; // replace with real user context
+  // Simulated auth user
+  const user = { id: null, name: "Wisdom" }; // null = not logged in
   const unreadMessages = 3;
   const unreadNotifications = 5;
 
@@ -84,15 +85,13 @@ const NavBar = () => {
             )}
           </button>
 
-          {/* Profile */}
-          <div className="relative group">
-            {user?.id ? (
+          {/* Profile / Auth */}
+          <div className="relative group hidden md:block">
+            {!user?.id ? (
               <>
-                <img
-                  className="w-[40px] h-[40px] rounded-full object-cover cursor-pointer"
-                  src="https://pictures-nigeria.jijistatic.net/179047550_MTIwMC0xNjAwLTRlM2I1YTIyNTc.webp"
-                  alt="Profile"
-                />
+                <div className="w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
+                  <Settings className="text-gray-700" size={20} />
+                </div>
                 <div
                   style={{ boxShadow: "rgba(0,0,0,0.1) 0px 1px 3px 0px" }}
                   className="absolute top-12 right-0 w-[170px] bg-white rounded-lg p-4 space-y-4 opacity-0 scale-95 invisible 
@@ -105,7 +104,7 @@ const NavBar = () => {
                     <ShoppingBag size={18} /> My Shop
                   </Link>
                   <Link
-                    href="/setting"
+                    href="/user-dashboard/setting"
                     className="flex items-center gap-3 hover:text-green-600"
                   >
                     <Settings size={18} /> Settings
@@ -117,7 +116,7 @@ const NavBar = () => {
               </>
             ) : (
               <>
-                <div className="w-[40px] h-[40px] rounded-full bg-gray-200 flex items-center justify-center cursor-pointer">
+                <div className="w-[40px] h-[40px] bg-gray-200 flex items-center justify-center rounded-full cursor-pointer">
                   <LogIn className="text-gray-700" size={20} />
                 </div>
                 <div
@@ -144,7 +143,7 @@ const NavBar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 cursor-pointer transition"
+            className="md:hidden w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
             onClick={() => setMobileNavOpen(true)}
           >
             <List className="text-gray-700" size={22} />
@@ -153,51 +152,104 @@ const NavBar = () => {
       </div>
 
       {/* Mobile Slide-In Nav */}
-      <div
-        className={`fixed top-0 right-0 w-[260px] h-full bg-white z-50 transform ${
-          mobileNavOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 shadow-lg`}
-      >
-        <div className="flex justify-between items-center p-4 border-gray-200 border-b-[0.5px]">
-          <h3 className="font-semibold text-lg">Menu</h3>
-          <button
-            className="w-[35px] h-[35px] cursor-pointer flex items-center justify-center rounded-full hover:bg-gray-100"
-            onClick={() => setMobileNavOpen(false)}
-          >
-            <X size={22} className="text-gray-700" />
-          </button>
-        </div>
+      <AnimatePresence>
+        {mobileNavOpen && (
+          <>
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="fixed top-0 right-0 w-[270px] h-full bg-white z-50 shadow-lg flex flex-col justify-between"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                <h3 className="font-semibold text-lg">Menu</h3>
+                <button
+                  className="w-[35px] h-[35px] flex items-center justify-center rounded-full hover:bg-gray-100"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  <X size={22} className="text-gray-700" />
+                </button>
+              </div>
 
-        <nav className="flex flex-col p-4 space-y-3">
-          {navLinks.map((link) => {
-            const isActive =
-              pathname === link.path ||
-              (link.path !== "/" && pathname.startsWith(link.path));
-            return (
-              <Link
-                key={link.id}
-                href={link.path}
-                onClick={() => setMobileNavOpen(false)}
-                className={`text-[15px] font-[500] px-2 py-2 rounded-md transition-colors duration-200 ${
-                  isActive
-                    ? "bg-green-500 text-white font-semibold"
-                    : "text-gray-700 hover:bg-green-50 hover:text-green-600"
-                }`}
-              >
-                {link.title}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
+              {/* Nav Links */}
+              <nav className="flex flex-col p-4 space-y-3 flex-grow overflow-y-auto">
+                {navLinks.map((link) => {
+                  const isActive =
+                    pathname === link.path ||
+                    (link.path !== "/" && pathname.startsWith(link.path));
+                  return (
+                    <Link
+                      key={link.id}
+                      href={link.path}
+                      onClick={() => setMobileNavOpen(false)}
+                      className={`text-[15px] font-[500] px-2 py-3 rounded-md transition-colors duration-200 ${
+                        isActive
+                          ? "bg-green-500 text-white font-semibold"
+                          : "text-gray-700 hover:bg-green-50 hover:text-green-600"
+                      }`}
+                    >
+                      {link.title}
+                    </Link>
+                  );
+                })}
+              </nav>
 
-      {/* Overlay when open */}
-      {mobileNavOpen && (
-        <div
-          onClick={() => setMobileNavOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-        ></div>
-      )}
+              {/* Footer (Auth Section) */}
+              <div className="border-t border-gray-200 p-4 flex flex-col gap-3 bg-gray-50">
+                {!user?.id ? (
+                  <>
+                    <Link
+                      href="/user-dashboard/post"
+                      onClick={() => setMobileNavOpen(false)}
+                      className="flex items-center gap-3 hover:text-green-600"
+                    >
+                      <ShoppingBag size={18} /> My Shop
+                    </Link>
+                    <Link
+                      href="/setting"
+                      onClick={() => setMobileNavOpen(false)}
+                      className="flex items-center gap-3 hover:text-green-600"
+                    >
+                      <Settings size={18} /> Settings
+                    </Link>
+                    <button className="flex items-center gap-3 text-left hover:text-green-600">
+                      <LogOut size={18} /> Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/sign-in"
+                      onClick={() => setMobileNavOpen(false)}
+                      className="flex items-center gap-3 hover:text-green-600"
+                    >
+                      <LogIn size={18} /> Sign In
+                    </Link>
+                    <Link
+                      href="/sign-up"
+                      onClick={() => setMobileNavOpen(false)}
+                      className="flex items-center gap-3 hover:text-green-600"
+                    >
+                      <UserPlus size={18} /> Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Overlay */}
+            <motion.div
+              onClick={() => setMobileNavOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-40 md:hidden"
+            ></motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
