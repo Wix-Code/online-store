@@ -11,45 +11,37 @@ import {
   Bell,
   LogIn,
   UserPlus,
+  List,
+  X,
 } from "lucide-react";
 import { navLinks } from "../dummyData";
-// import CartSideBar from "./CartSideBar"; // if needed later
 
 const NavBar = () => {
-  const [openSideBarCart, setOpenSideBarCart] = useState(false);
   const pathname = usePathname();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  // Example: replace this with your real auth user context or Redux state
-  const user = {
-    id: null, // null means not logged in
-    name: "Wisdom",
-  };
-
-  // Example unread counts
+  // Simulate auth
+  const user = { id: null, name: "Wisdom" }; // replace with real user context
   const unreadMessages = 3;
   const unreadNotifications = 5;
 
-  const close = () => setOpenSideBarCart(false);
-
   return (
-    <div
+    <header
       style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 2px 0px" }}
       className="sticky top-0 bg-[#fdfdfd] z-50"
     >
-      <div className="flex bg-[#fdfdfd] justify-between items-center max-w-[1200px] m-auto h-[60px] px-3">
+      <div className="flex justify-between items-center max-w-[1200px] m-auto h-[60px] px-4">
         {/* Logo */}
-        <div>
-          <Link href="/">
-            <img
-              className="w-20"
-              src="https://www.foodlocker.com.ng/public/main/images/icons/ic-logo-00.webp"
-              alt="Logo"
-            />
-          </Link>
-        </div>
+        <Link href="/">
+          <img
+            className="w-20"
+            src="https://www.foodlocker.com.ng/public/main/images/icons/ic-logo-00.webp"
+            alt="Logo"
+          />
+        </Link>
 
-        {/* Nav Links */}
-        <div className="flex gap-5 items-center">
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex gap-6 items-center">
           {navLinks.map((link) => {
             const isActive =
               pathname === link.path ||
@@ -60,7 +52,7 @@ const NavBar = () => {
                 href={link.path}
                 className={`text-[15px] font-[500] transition-colors duration-200 ${
                   isActive
-                    ? "text-green-500 font-[600]"
+                    ? "text-green-600 font-semibold"
                     : "text-gray-700 hover:text-green-500"
                 }`}
               >
@@ -68,90 +60,80 @@ const NavBar = () => {
               </Link>
             );
           })}
-        </div>
+        </nav>
 
-        {/* Right side icons */}
-        <div className="flex relative items-center gap-4">
-          {/* Messages Icon */}
-          <div className="relative cursor-pointer">
-            <button className="w-[40px] h-[40px] rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"><MessageSquare className="text-gray-700" size={22} /></button>
+        {/* Right Side Icons */}
+        <div className="flex items-center gap-3">
+          {/* Messages */}
+          <button className="relative w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
+            <MessageSquare className="text-gray-700" size={22} />
             {unreadMessages > 0 && (
-              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
                 {unreadMessages}
               </span>
             )}
-          </div>
+          </button>
 
-          {/* Notifications Icon */}
-          <div className="relative cursor-pointer">
-            <button className="w-[40px] h-[40px] rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"><Bell className="text-gray-700" size={22} /></button>
+          {/* Notifications */}
+          <button className="relative w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
+            <Bell className="text-gray-700" size={22} />
             {unreadNotifications > 0 && (
-              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
                 {unreadNotifications}
               </span>
             )}
-          </div>
+          </button>
 
-          {/* Profile Section */}
+          {/* Profile */}
           <div className="relative group">
             {user?.id ? (
               <>
-                {/* Profile image */}
                 <img
-                  className="w-[40px] h-[40px] object-cover cursor-pointer rounded-full"
+                  className="w-[40px] h-[40px] rounded-full object-cover cursor-pointer"
                   src="https://pictures-nigeria.jijistatic.net/179047550_MTIwMC0xNjAwLTRlM2I1YTIyNTc.webp"
                   alt="Profile"
                 />
-
-                {/* Logged-in dropdown */}
                 <div
-                  style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 1px 2px 0px" }}
-                  className="space-y-5 p-4 absolute top-14 w-[160px] bg-white right-0 
-                    opacity-0 scale-95 invisible 
-                    group-hover:opacity-100 group-hover:scale-100 group-hover:visible
-                    transition-all duration-300 rounded-lg"
+                  style={{ boxShadow: "rgba(0,0,0,0.1) 0px 1px 3px 0px" }}
+                  className="absolute top-12 right-0 w-[170px] bg-white rounded-lg p-4 space-y-4 opacity-0 scale-95 invisible 
+                    group-hover:opacity-100 group-hover:scale-100 group-hover:visible transition-all duration-300"
                 >
                   <Link
                     href="/user-dashboard/post"
-                    className="flex items-center gap-3 hover:text-[#009c6dfa]"
+                    className="flex items-center gap-3 hover:text-green-600"
                   >
                     <ShoppingBag size={18} /> My Shop
                   </Link>
                   <Link
                     href="/setting"
-                    className="flex items-center gap-3 hover:text-[#009c6dfa]"
+                    className="flex items-center gap-3 hover:text-green-600"
                   >
                     <Settings size={18} /> Settings
                   </Link>
-                  <button className="flex w-full items-center gap-3 text-left hover:text-[#009c6dfa]">
+                  <button className="flex items-center gap-3 w-full text-left hover:text-green-600">
                     <LogOut size={18} /> Logout
                   </button>
                 </div>
               </>
             ) : (
               <>
-                {/* Default icon when not logged in */}
                 <div className="w-[40px] h-[40px] rounded-full bg-gray-200 flex items-center justify-center cursor-pointer">
                   <LogIn className="text-gray-700" size={20} />
                 </div>
-
-                {/* Guest dropdown */}
                 <div
-                  style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 1px 2px 0px" }}
-                  className="space-y-4 p-4 absolute top-14 w-[160px] bg-white right-0 
-                    opacity-0 scale-95 invisible 
-                    group-hover:opacity-100 group-hover:scale-100 group-hover:visible
-                    transition-all duration-300 rounded-lg"
+                  style={{ boxShadow: "rgba(0,0,0,0.1) 0px 1px 3px 0px" }}
+                  className="absolute top-12 right-0 w-[170px] bg-white rounded-lg p-4 space-y-4 opacity-0 scale-95 invisible 
+                    group-hover:opacity-100 group-hover:scale-100 group-hover:visible transition-all duration-300"
                 >
                   <Link
                     href="/sign-in"
-                    className="flex items-center gap-3 hover:text-[#009c6dfa]"
+                    className="flex items-center gap-3 hover:text-green-600"
                   >
                     <LogIn size={18} /> Sign In
                   </Link>
                   <Link
                     href="/sign-up"
-                    className="flex items-center gap-3 hover:text-[#009c6dfa]"
+                    className="flex items-center gap-3 hover:text-green-600"
                   >
                     <UserPlus size={18} /> Sign Up
                   </Link>
@@ -159,11 +141,64 @@ const NavBar = () => {
               </>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 cursor-pointer transition"
+            onClick={() => setMobileNavOpen(true)}
+          >
+            <List className="text-gray-700" size={22} />
+          </button>
         </div>
       </div>
 
-      {/* <CartSideBar isOpen={openSideBarCart} close={close} /> */}
-    </div>
+      {/* Mobile Slide-In Nav */}
+      <div
+        className={`fixed top-0 right-0 w-[260px] h-full bg-white z-50 transform ${
+          mobileNavOpen ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 shadow-lg`}
+      >
+        <div className="flex justify-between items-center p-4 border-gray-200 border-b-[0.5px]">
+          <h3 className="font-semibold text-lg">Menu</h3>
+          <button
+            className="w-[35px] h-[35px] cursor-pointer flex items-center justify-center rounded-full hover:bg-gray-100"
+            onClick={() => setMobileNavOpen(false)}
+          >
+            <X size={22} className="text-gray-700" />
+          </button>
+        </div>
+
+        <nav className="flex flex-col p-4 space-y-3">
+          {navLinks.map((link) => {
+            const isActive =
+              pathname === link.path ||
+              (link.path !== "/" && pathname.startsWith(link.path));
+            return (
+              <Link
+                key={link.id}
+                href={link.path}
+                onClick={() => setMobileNavOpen(false)}
+                className={`text-[15px] font-[500] px-2 py-2 rounded-md transition-colors duration-200 ${
+                  isActive
+                    ? "bg-green-500 text-white font-semibold"
+                    : "text-gray-700 hover:bg-green-50 hover:text-green-600"
+                }`}
+              >
+                {link.title}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Overlay when open */}
+      {mobileNavOpen && (
+        <div
+          onClick={() => setMobileNavOpen(false)}
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+        ></div>
+      )}
+    </header>
   );
 };
 
