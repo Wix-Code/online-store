@@ -2,18 +2,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import {
+  User,
+  PlusSquare,
+  Store,
+  Package,
+  Users,
+  Bell,
+  MessageSquare,
+} from "lucide-react"; // ✅ icons
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const links = [
-    { href: "/user-dashboard/setting", label: "User Details" },
-    { href: "/user-dashboard/post", label: "Post Product" },
-    { href: "/user-dashboard/store", label: "Store" },
-    { href: "/user-dashboard/products", label: "Products" },
-    { href: "/user-dashboard/followers", label: "Followers" },
-    { href: "/user-dashboard/notifications", label: "Notifications" },
-    { href: "/user-dashboard/messages", label: "Messages" },
+    { href: "/user-dashboard/setting", label: "Manage Profile", icon: User },
+    { href: "/user-dashboard/post", label: "Post Product", icon: PlusSquare },
+    { href: "/user-dashboard/store", label: "Store", icon: Store },
+    { href: "/user-dashboard/products", label: "Products", icon: Package },
+    { href: "/user-dashboard/followers", label: "Followers", icon: Users },
+    { href: "/user-dashboard/notifications", label: "Notifications", icon: Bell },
+    { href: "/user-dashboard/messages", label: "Messages", icon: MessageSquare },
   ];
 
   return (
@@ -22,19 +31,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className="w-64 bg-gray-100 h-[calc(100vh-60px)] sticky top-[60px] py-4">
         <h2 className="text-lg pl-3 font-bold mb-6">Dashboard</h2>
         <nav>
-          {links.map((link) => {
-            const isActive = pathname === link.href;
+          {links.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href;
             return (
               <Link
-                key={link.href}
-                href={link.href}
-                className={`block p-3 transition ${
+                key={href}
+                href={href}
+                className={`flex items-center gap-2 p-3 transition rounded-md ${
                   isActive
                     ? "bg-green-500 text-white font-semibold"
                     : "text-gray-800 hover:bg-green-500 hover:text-white"
                 }`}
               >
-                {link.label}
+                <Icon size={18} />
+                <span>{label}</span>
               </Link>
             );
           })}
