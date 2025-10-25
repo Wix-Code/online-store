@@ -31,7 +31,7 @@ const NavBar = () => {
       style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 2px 0px" }}
       className="sticky top-0 bg-[#fdfdfd] z-50"
     >
-      <div className="flex justify-between items-center max-w-[1200px] m-auto h-[60px] px-4">
+      <div className="flex justify-between items-center max-w-[1200px] m-auto h-[70px] md:h-[60px] px-4">
         {/* Logo */}
         <Link href="/">
           <img

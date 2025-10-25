@@ -20,10 +20,18 @@ const ItemCard = ({id, description, image, price} : Props) => {
           src={image}
           className="w-full h-[200px] object-cover mb-2"
         />
+      </div>
 
+      <Link href={`/products/${id}`}>
+        <h2 className="text-[14px] text-[#8b8b8b] border-b-[1px] w-fit border-[#e0e0e0] font-normal">
+        {description.slice(0, 30)}...
+      </h2>
+      </Link>
+      <div className='flex items-center justify-between'>
+        <p className="text-[14px] text-[#009c6dfa] font-[600]">₦{price}</p>
         {/* Hover icons */}
         <div
-          className=" opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2 text-[#555555]"
+          className=" opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 text-[#555555]"
         >
           <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
             <Heart className="w-[16px]" />
@@ -36,13 +44,6 @@ const ItemCard = ({id, description, image, price} : Props) => {
           </button>
         </div>
       </div>
-
-      <Link href={`/products/${id}`}>
-        <h2 className="text-[14px] text-[#8b8b8b] border-b-[1px] w-fit border-[#e0e0e0] font-normal">
-        {description.slice(0, 30)}...
-      </h2>
-      </Link>
-      <p className="text-[14px] text-[#009c6dfa] font-[600]">₦{price}</p>
       {/* <button className='text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer'><ShoppingCart className='w-[16px]' /> Add to cart</button> */}
     </div>
   )
