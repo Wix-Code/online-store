@@ -1,52 +1,60 @@
-import { Heart, RefreshCw, ShoppingCart, ZoomIn } from 'lucide-react'
-import Link from 'next/link'
-import React from 'react'
+import { MapPin, Heart, ZoomIn } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
 type Props = {
   id: number;
   description: string;
   image: string;
   price: number;
-}
-const ItemCard = ({id, description, image, price} : Props) => {
+  location?: string;
+};
+
+const ItemCard = ({ id, description, image, price, location }: Props) => {
   return (
     <div
       key={id}
-      className="group flex flex-col gap-2 cursor-pointer space-y-2 rounded mb-4"
+      className="group flex flex-col gap-2 cursor-pointer rounded-lg border border-[#f1f1f1] p-2 shadow-sm hover:shadow-md transition-all duration-300 mb-4 bg-white"
     >
-      <div className="flex gap-2">
-        {/* Product Image */}
+      {/* Product Image */}
+      <div className="relative w-full h-[200px] overflow-hidden rounded-md">
         <img
           src={image}
-          className="w-full h-[200px] object-cover mb-2"
+          alt={description}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
 
-      <Link href={`/products/${id}`}>
-        <h2 className="text-[14px] text-[#8b8b8b] border-b-[1px] w-fit border-[#e0e0e0] font-normal">
-        {description.slice(0, 30)}...
-      </h2>
-      </Link>
-      <div className='flex items-center justify-between'>
-        <p className="text-[14px] text-[#009c6dfa] font-[600]">₦{price}</p>
-        {/* Hover icons */}
-        <div
-          className=" opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 text-[#555555]"
-        >
-          <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-            <Heart className="w-[16px]" />
-          </button>
-          {/* <button title="Add to compare" className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-            <RefreshCw className="w-[16px]" />
-          </button> */}
-          <button className="cursor-pointer bg-[#fcfcfc] shadow p-1">
-            <ZoomIn className="w-[18px]" />
-          </button>
+      {/* Product Info */}
+      <div className="flex flex-col gap-1">
+        <Link href={`/products/${id}`}>
+          <h2 className="text-[14px] text-[#444] font-medium hover:text-[#009c6d] transition-colors line-clamp-2">
+            {description}
+          </h2>
+        </Link>
+
+        <div className="flex items-center justify-between">
+          <p className="text-[14px] text-[#009c6d] font-semibold">₦{price}</p>
+
+          {/* Hover Icons */}
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 text-[#555]">
+            <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow-sm rounded">
+              <Heart className="w-[16px]" />
+            </button>
+            <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow-sm rounded">
+              <ZoomIn className="w-[18px]" />
+            </button>
+          </div>
+        </div>
+
+        {/* Location */}
+        <div className="flex items-center gap-1 mt-2 text-[13px] text-gray-600">
+          <MapPin className="w-4 h-4 text-[#009c6d]" />
+          <span>Dutse, Abuja FCT</span>
         </div>
       </div>
-      {/* <button className='text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer'><ShoppingCart className='w-[16px]' /> Add to cart</button> */}
     </div>
-  )
-}
+  );
+};
 
-export default ItemCard
+export default ItemCard;

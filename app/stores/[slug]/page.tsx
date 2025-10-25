@@ -3,8 +3,8 @@
 import { useGetStoreById } from "@/app/api/stores";
 import SearchInput from "@/app/components/SearchInput";
 import SortFilter from "@/app/components/SortFilter";
-import { Heart, MapPin, RefreshCw, ZoomIn } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { Heart, MapPin, ZoomIn } from "lucide-react";
+import { FaWhatsapp, FaStore } from "react-icons/fa";
 import React, { use } from "react";
 import { slugify } from "@/app/components/CardItem";
 import Link from "next/link";
@@ -63,110 +63,120 @@ const Page = ({ params }: Props) => {
   }
 
   const store = data.store;
-  console.log(store, "store")
 
   return (
-    <div className="max-w-[1000px] mt-8 space-y-4 m-auto">
+    <div className="max-w-[1000px] mt-8 space-y-6 m-auto">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <SearchInput onChange={() => {}} value="" className="w-[400px]" />
-        <div>
-          <SortFilter />
-        </div>
+        <SortFilter />
       </div>
 
       <div className="gap-4 flex">
         {/* Sidebar */}
-        <div className="flex-[25%] space-y-4">
+        <div className="flex-[25%] space-y-5">
+          {/* Store Card */}
           <div
             style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px" }}
-            className="flex-[25%] bg-[#fafafa] border flex justify-center items-center space-y-2 flex-col p-5 border-[#f5f5f5]"
+            className="flex-[25%] bg-[#fafafa] border flex justify-center items-center space-y-2 flex-col p-5 border-[#f5f5f5] rounded-[10px] transition-all hover:shadow-md"
           >
             <img
-              className="w-[100px] h-[100px] object-cover rounded-full"
+              className="w-[100px] h-[100px] object-cover rounded-full ring-2 ring-green-500/20"
               src={store.imageUrl}
               alt={store.name}
             />
-            <p className="text-[16px] font-[600]">{store.name}</p>
-            <p className="text-[12px] font-[400]">6y 1m on Jiji</p>
+            <p className="text-[18px] font-[700] text-gray-800 flex items-center gap-2">
+              <FaStore className="text-green-600" /> {store.name}
+            </p>
+            <p className="text-[13px] text-gray-500 font-[400]">6y 1m on Jiji</p>
           </div>
 
-          <div className="space-y-2">
+          {/* Contact Buttons */}
+          <div className="space-y-3">
             <a
               href="https://wa.me/2348125352020"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full h-[46px] gap-2 rounded-[8px] bg-green-500 flex items-center justify-center text-white hover:bg-green-600 transition"
+              className="w-full h-[46px] gap-2 rounded-[8px] bg-green-600 flex items-center justify-center text-white hover:bg-green-700 transition font-semibold"
             >
               <FaWhatsapp className="text-[22px]" />
               Chat Vendor
             </a>
             <a
-              href="https://wa.me/2348125352020"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full h-[46px] rounded-[8px] gap-2 bg-green-500 flex items-center justify-center text-white hover:bg-green-600 transition"
+              href="tel:+2348125352020"
+              className="w-full h-[46px] rounded-[8px] gap-2 bg-green-600 flex items-center justify-center text-white hover:bg-green-700 transition font-semibold"
             >
               <FaWhatsapp className="text-[22px]" />
               Call Vendor
             </a>
           </div>
 
+          {/* About Seller */}
           <div
             style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px" }}
-            className="flex flex-col bg-white rounded-[4px] p-3 text-[#8b8b8b] border border-[#f5f5f5] space-y-2"
+            className="flex flex-col bg-white rounded-[8px] p-4 text-[#8b8b8b] border border-[#f5f5f5] space-y-2"
           >
-            <p className="text-[16px] font-[500]">About Seller</p>
-            <p className="text-[14px] text-black font-[400]">
-              {store.description}
+            <p className="text-[16px] font-[600] text-gray-800">About Seller</p>
+            <p className="text-[14px] text-gray-600 leading-relaxed">
+              {store.description || "This vendor provides fresh and organic farm produce."}
             </p>
           </div>
         </div>
 
         {/* Products Grid */}
         <div className="flex-[75%]">
-          <div className="grid grid-cols-1 bg-white sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 bg-white sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {store.products.map((item: any) => (
               <div
                 key={item.id}
-                className="group flex flex-col gap-2 cursor-pointer space-y-2 rounded mb-4"
+                className="group flex flex-col gap-2 cursor-pointer rounded-lg overflow-hidden border border-[#eee] hover:shadow-lg transition-all duration-300"
               >
-                <div className="flex gap-2">
+                <div className="relative">
                   <img
                     src={item.imageUrl}
                     alt={item.name}
-                    className="w-full h-[200px] object-cover mb-2"
+                    className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
                   />
+                  <button className="absolute top-3 right-3 bg-white/80 hover:bg-white rounded-full p-1 shadow-md">
+                    <Heart className="w-[16px] text-gray-600" />
+                  </button>
+                </div>
 
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2 text-[#555555]">
-                    <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-                      <Heart className="w-[16px]" />
-                    </button>
+                <div className="p-3 space-y-1">
+                  <Link
+                    href={`/products/${item.id}-${slugify(item.description)}`}
+                    className="text-[14px] text-gray-700 hover:text-green-700 font-medium line-clamp-2"
+                  >
+                    {item.description}
+                  </Link>
+
+                  <p className="text-[15px] text-green-700 font-[700]">
+                    ₦{item.price.toLocaleString()}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-[13px] text-gray-500 flex items-center gap-1">
+                      <MapPin className="w-[14px]" />
+                      {item.location || "Abuja, FCT"}
+                    </span>
                     <button
-                      title="Add to compare"
-                      className="cursor-pointer bg-[#fcfcfc] p-1 shadow"
+                      title="View Details"
+                      className="cursor-pointer bg-[#fcfcfc] p-1 shadow hover:shadow-md transition"
                     >
-                      <RefreshCw className="w-[16px]" />
-                    </button>
-                    <button className="cursor-pointer bg-[#fcfcfc] shadow p-1">
                       <ZoomIn className="w-[18px]" />
                     </button>
                   </div>
                 </div>
-
-                <Link href={`/products/${item.id}-${slugify(item.description)}`} className="text-[14px] text-[#8b8b8b] border-b w-fit border-[#e0e0e0] font-normal">
-                  {item.description.slice(0, 30)}...
-                </Link>
-
-                <p className="text-[14px] text-[#009c6dfa] font-[600]">
-                  ₦{item.price.toLocaleString()}
-                </p>
-                <button className="text-[14px] text-black flex items-center gap-1 font-[600] cursor-pointer">
-                  <MapPin className="w-[16px]" />
-                  {item.location || "Abuja, FCT"}
-                </button>
               </div>
             ))}
           </div>
+
+          {/* Empty State */}
+          {store.products.length === 0 && (
+            <div className="text-center py-16 text-gray-500">
+              No products found in this store yet.
+            </div>
+          )}
         </div>
       </div>
     </div>
