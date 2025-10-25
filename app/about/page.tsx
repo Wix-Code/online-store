@@ -6,14 +6,14 @@ import { Users, ShieldCheck, ShoppingBag, Globe } from "lucide-react";
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen overflow-hidden bg-gray-50">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-green-700 to-emerald-500 text-white py-20 px-6 text-center">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-bold"
+          className="text-[30px] md:text-5xl font-bold"
         >
           About <span className="text-yellow-300">Venyers</span>
         </motion.h1>
@@ -27,7 +27,7 @@ const AboutPage = () => {
       <section className="py-16 px-6 md:px-16 bg-white">
         <div className="max-w-5xl mx-auto space-y-10">
           <div>
-            <h2 className="text-3xl font-bold mb-3 text-gray-800">Our Story</h2>
+            <h2 className="md:text-3xl text-[26px] font-bold mb-3 text-gray-800">Our Story</h2>
             <p className="text-gray-600 leading-relaxed">
               Venyers was born out of a vision to bridge the gap between buyers
               and sellers across Africa, starting from Nigeria. We realized how
@@ -38,7 +38,7 @@ const AboutPage = () => {
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold mb-3 text-gray-800">Our Mission</h2>
+            <h2 className="md:text-3xl text-[26px] font-bold mb-3 text-gray-800">Our Mission</h2>
             <p className="text-gray-600 leading-relaxed">
               To create a digital marketplace that connects millions of people,
               helping small businesses grow while offering buyers quality and
@@ -47,7 +47,7 @@ const AboutPage = () => {
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold mb-3 text-gray-800">Our Vision</h2>
+            <h2 className="md:text-3xl text-[26px] font-bold mb-3 text-gray-800">Our Vision</h2>
             <p className="text-gray-600 leading-relaxed">
               To be Africa’s most trusted and innovative online marketplace,
               where trade meets transparency and opportunity.
@@ -59,7 +59,7 @@ const AboutPage = () => {
       {/* Values */}
       <section className="bg-gray-100 py-16 px-6 md:px-16">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-10 text-gray-800">
+          <h2 className="md:text-3xl text-[26px] font-bold mb-10 text-gray-800">
             Our Core Values
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
@@ -101,7 +101,7 @@ const AboutPage = () => {
 
       {/* Contact */}
       <section className="py-20 px-6 md:px-16 bg-white text-center">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">
+        <h2 className="md:text-3xl text-[26px] font-bold mb-6 text-gray-800">
           Get in Touch
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto mb-6">

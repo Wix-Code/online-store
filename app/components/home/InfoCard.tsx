@@ -46,7 +46,7 @@ const InfoCard = () => {
           viewport={{ once: true }}
         >
           <motion.img
-            src="https://cdn.prod.website-files.com/65e8c28f089978cd40da4f5c/66c62cc20f8b19a270824aee_Local%20Line%20Blog%20Feature%20Image_Offer%20Home%20Delivery%20For%20Your%20Farm.webp"
+            src="/pics/im.webp"
             alt="Store variety"
             className="w-full h-[280px] md:h-[400px] object-cover rounded-lg shadow-md"
             whileHover={{ scale: 1.03 }}

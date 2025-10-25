@@ -3,7 +3,7 @@
 import { useGetStoreById } from "@/app/api/stores";
 import SearchInput from "@/app/components/SearchInput";
 import SortFilter from "@/app/components/SortFilter";
-import { Heart, MapPin, ZoomIn } from "lucide-react";
+import { Heart, MapPin, Package, ZoomIn } from "lucide-react";
 import { FaWhatsapp, FaStore } from "react-icons/fa";
 import React, { use } from "react";
 import { slugify } from "@/app/components/CardItem";
@@ -173,8 +173,14 @@ const Page = ({ params }: Props) => {
 
           {/* Empty State */}
           {store.products.length === 0 && (
-            <div className="text-center py-16 text-gray-500">
-              No products found in this store yet.
+            <div className="text-center py-16 text-gray-500 flex flex-col items-center justify-center">
+              <Package className="w-12 h-12 text-gray-400 mb-3" />
+              <p className="text-lg font-medium text-gray-600">
+                No products found in this store yet.
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                Please check back later for new items.
+              </p>
             </div>
           )}
         </div>

@@ -37,7 +37,7 @@ const HeroPage = () => {
         {/* RIGHT IMAGE */}
         <div className="flex-1 flex justify-center">
           <img
-            src="https://media.cntraveler.com/photos/5b86c3d8c2ca957cff4b496b/16:9/w_2560,c_limit/Oranjezicht%20City%20Farm%20-%20Market_2018_Ozcf-Market-Veg-Display.jpg" // 🧠 Replace with your image path
+            src="/pics/img.webp" // 🧠 Replace with your image path
             alt="Farm products and food"
             className="rounded-2xl w-full h-[380px] object-cover shadow-lg"
           />
