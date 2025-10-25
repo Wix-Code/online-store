@@ -28,8 +28,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-100 h-[calc(100vh-60px)] sticky top-[60px] py-4">
-        <h2 className="text-lg pl-3 font-bold mb-6">Dashboard</h2>
+      <aside className="md:w-64 bg-gray-100 h-[calc(100vh-60px)] sticky top-[60px] py-4">
+        <h2 className="text-lg pl-3 font-bold md:flex hidden mb-6">Dashboard</h2>
         <nav>
           {links.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href;
@@ -44,7 +44,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 }`}
               >
                 <Icon size={18} />
-                <span>{label}</span>
+                <span className="md:flex hidden">{label}</span>
               </Link>
             );
           })}
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-6">{children}</main>
+      <main className="flex-1 p-4 md:p-6">{children}</main>
     </div>
   );
 }

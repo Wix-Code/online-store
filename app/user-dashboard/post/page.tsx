@@ -50,7 +50,7 @@ const Post = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div className="max-w-4xl mx-auto mt-6 bg-white md:p-6 rounded-2xl md:shadow-sm md:border border-gray-100">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Post a New Product</h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">

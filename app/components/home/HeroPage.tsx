@@ -6,7 +6,7 @@ import Link from "next/link";
 const HeroPage = () => {
   return (
     <section className="bg-gradient-to-b from-green-50 to-white py-10 md:py-10">
-      <div className="container mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-10">
+      <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-10">
         {/* LEFT CONTENT */}
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-[30px] md:text-[50px] font-bold text-green-800 leading-tight mb-4">
