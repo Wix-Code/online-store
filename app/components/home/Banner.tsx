@@ -1,8 +1,8 @@
 "use client";
 
-import { banner } from "@/app/dummyData";
 import React from "react";
 import { motion } from "framer-motion";
+import { banner } from "@/app/dummyData";
 
 const Banner = () => {
   return (

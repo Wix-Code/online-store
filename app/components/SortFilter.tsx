@@ -6,23 +6,40 @@ import { ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface SortFilterProps {
-  onSelect?: (id: string) => void; // callback when option selected
+  onSelect?: (id: string) => void;
+  size?: "sm" | "md" | "lg"; // 👈 size control
 }
 
-const SortFilter: React.FC<SortFilterProps> = ({ onSelect }) => {
+const SortFilter: React.FC<SortFilterProps> = ({ onSelect, size = "md" }) => {
   const [open, setOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<string>(sort[0]?.id ?? ""); // first selected by default
+  const [selectedType, setSelectedType] = useState<string>(sort[0]?.id ?? "");
 
-  // Call onSelect whenever value changes
+  // Apply size-based styles
+  const sizeStyles = {
+    sm: {
+      height: "36px",
+      padding: "0 10px",
+      fontSize: "12px",
+    },
+    md: {
+      height: "46px",
+      padding: "0 12px",
+      fontSize: "13px",
+    },
+    lg: {
+      height: "54px",
+      padding: "0 14px",
+      fontSize: "15px",
+    },
+  }[size];
+
   useEffect(() => {
-    if (selectedType) {
-      onSelect?.(selectedType);
-    }
+    if (selectedType) onSelect?.(selectedType);
   }, [selectedType, onSelect]);
 
   const handleSelect = (id: string) => {
     setSelectedType(id);
-    setOpen(false); // close immediately
+    setOpen(false);
   };
 
   const selectedLabel = sort.find((item) => item.id === selectedType)?.name ?? "";
@@ -30,36 +47,47 @@ const SortFilter: React.FC<SortFilterProps> = ({ onSelect }) => {
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <button className="flex cursor-pointer justify-between items-center bg-white border rounded-[4px] px-[12px] h-[46px] text-left border-[#00000]">
-          <div className="flex gap-[14px] items-center overflow-hidden max-w-[calc(100vw-80px)]">
-            <span className="text-[#5F6370] whitespace-nowrap text-[12px] font-[400] tracking-[-0.24px]">
+        <button
+          className="flex cursor-pointer justify-between items-center bg-white border rounded-[4px] text-left border-[#000000]/10 hover:border-[#000000]/30 transition"
+          style={{
+            height: sizeStyles.height,
+            padding: sizeStyles.padding,
+            fontSize: sizeStyles.fontSize,
+          }}
+        >
+          <div className="flex gap-[10px] items-center overflow-hidden max-w-[calc(100vw-80px)]">
+            <span className="text-[#5F6370] whitespace-nowrap font-[400] tracking-[-0.24px]">
               Sort By:
             </span>
-            <span className="text-[#1E1E1E] text-[12px] font-[600] tracking-[-0.24px] overflow-hidden whitespace-nowrap text-ellipsis">
+            <span className="text-[#1E1E1E] font-[600] tracking-[-0.24px] overflow-hidden whitespace-nowrap text-ellipsis">
               {selectedLabel}
             </span>
           </div>
-          <ChevronDown width={12} height={12} color="#1E1E1E" />
+          <ChevronDown width={14} height={14} color="#1E1E1E" />
         </button>
       </Popover.Trigger>
 
       <Popover.Content
         sideOffset={5}
-        style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px" }}
-        className="w-[var(--radix-popover-trigger-width)] bg-white p-0 rounded-md"
+        align="start"
+        style={{
+          boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px",
+          width: "var(--radix-popover-trigger-width)",
+        }}
+        className="bg-white p-0 rounded-md z-[50]"
       >
         <ul className="overflow-y-auto max-h-40 scrollbar-hide">
           {sort.map((item) => (
             <li
               key={item.id}
               onClick={() => handleSelect(item.id)}
-              className="px-4 py-[10px] cursor-pointer text-[12px] tracking-[-0.24px] flex items-center gap-2 hover:bg-[#f5f5f5]"
+              className="px-4 py-[10px] cursor-pointer text-[13px] tracking-[-0.24px] flex items-center gap-2 hover:bg-[#f5f5f5] transition"
             >
               <input
                 type="radio"
                 checked={item.id === selectedType}
                 onChange={() => handleSelect(item.id)}
-                className="cursor-pointer"
+                className="cursor-pointer accent-black"
               />
               <span className={`${item.id === selectedType ? "font-[600]" : "font-[400]"}`}>
                 {item.name}

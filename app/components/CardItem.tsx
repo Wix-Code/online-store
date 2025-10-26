@@ -1,4 +1,4 @@
-import { Heart, RefreshCw, ShoppingCart, ZoomIn } from "lucide-react";
+import { Heart, MapPin, ZoomIn } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -7,6 +7,7 @@ type Props = {
   description: string;
   image?: string;
   price: number;
+  location?: string; // 👈 added
 };
 
 // Utility to slugify description safely
@@ -18,47 +19,57 @@ export const slugify = (text: string) => {
     .replace(/(^-|-$)+/g, ""); // remove leading/trailing dashes
 };
 
-const CardItem = ({ id, description, image, price }: Props) => {
+const CardItem = ({ id, description, image, price, location }: Props) => {
   const slug = slugify(description);
 
   return (
-    <div className="group cursor-pointer flex flex-col space-y-2 rounded mb-4">
-      <div className="flex gap-2 relative">
-        {/* Product Image */}
+    <div
+      key={id}
+      className="group cursor-pointer h-fit flex flex-col space-y-2 rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300 mb-4 overflow-hidden bg-white"
+    >
+      {/* Product Image */}
+      <div className="relative">
         <img
           src={image || "/placeholder.png"}
-          alt={description || "Product"}
-          className="w-full h-[200px] object-cover mb-2"
+          alt={description || "Product image"}
+          className="w-full h-[200px] object-cover"
         />
 
         {/* Hover icons */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2 text-[#555555]">
-          <button className="cursor-pointer bg-[#fcfcfc] p-1 shadow">
-            <Heart className="w-[16px]" />
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2">
+          <button
+            title="Add to favorites"
+            className="cursor-pointer bg-white p-1 rounded shadow hover:bg-gray-100"
+          >
+            <Heart className="w-[16px] text-gray-700" />
           </button>
           <button
-            title="Add to compare"
-            className="cursor-pointer bg-[#fcfcfc] p-1 shadow"
+            title="View product"
+            className="cursor-pointer bg-white p-1 rounded shadow hover:bg-gray-100"
           >
-            <RefreshCw className="w-[16px]" />
-          </button>
-          <button className="cursor-pointer bg-[#fcfcfc] shadow p-1">
-            <ZoomIn className="w-[18px]" />
+            <ZoomIn className="w-[18px] text-gray-700" />
           </button>
         </div>
       </div>
 
-      {/* Product Title with URL like jiji */}
-      <Link href={`/products/${id}-${slug}`}>
-        <h2 className="text-[14px] text-[#333333] font-semibold hover:underline">
-          {description}
-        </h2>
-      </Link>
+      {/* Product Info */}
+      <div className="px-2 pb-3">
+        <Link href={`/products/${id}-${slug}`}>
+          <h2 className="text-[14px] text-[#444] font-medium hover:text-[#009c6d] transition-colors line-clamp-2">
+            {description}
+          </h2>
+        </Link>
 
-      <p className="text-[14px] text-[#555555] font-[600]">₦{price.toLocaleString()}</p>
-      <button className="text-[12px] text-black flex items-center gap-1 font-[600] cursor-pointer">
-        <ShoppingCart className="w-[16px]" /> Add to cart
-      </button>
+        <p className="text-[14px] text-[#009c6d] font-[600] mt-1">
+          ₦{price?.toLocaleString()}
+        </p>
+
+        {/* Location */}
+        <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+          <MapPin className="w-[14px] h-[14px]" />
+          <span>{location || "Dutse, Abuja FCT"}</span>
+        </div>
+      </div>
     </div>
   );
 };

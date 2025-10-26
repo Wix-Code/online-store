@@ -4,11 +4,13 @@ import TopSellingProducts from './components/home/TopSellingProducts'
 import InfoCard from './components/home/InfoCard'
 import TopSellingStores from './components/home/TopSellingStores'
 import HeroPage from './components/home/HeroPage'
+import Categories from './components/home/Caategories'
 
 const page = () => {
   return (
     <div>
       <HeroPage />
+      <Categories />
       <Banner />
       <TopSellingProducts />
       <InfoCard />
