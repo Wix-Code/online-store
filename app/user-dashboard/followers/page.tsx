@@ -10,7 +10,7 @@ const Followers = () => {
   return (
     <DashboardLayout>
       <div>
-        <div className="flex items-center justify-between">
+        <div className="flex md:items-center w-full md:flex-row md:gap-0 gap-4 flex-col justify-between">
           <div className="flex items-center gap-2">
             <Users />
             <h1 className="text-xl font-bold">
@@ -18,10 +18,10 @@ const Followers = () => {
             </h1>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex md:flex-row flex-col gap-4">
             <button
               onClick={() => setActiveTab("followers")}
-              className={`w-[180px] h-[46px] border-green-500 cursor-pointer border-[1px] rounded-[8px] gap-2 transition
+              className={`md:w-[180px] h-[46px] border-green-500 cursor-pointer border-[1px] rounded-[8px] gap-2 transition
                 ${
                   activeTab === "followers"
                     ? "bg-green-500 text-white"
@@ -33,7 +33,7 @@ const Followers = () => {
 
             <button
               onClick={() => setActiveTab("following")}
-              className={`w-[180px] h-[46px] border-green-500 cursor-pointer border-[1px] rounded-[8px] gap-2 transition
+              className={`md:w-[180px] h-[46px] border-green-500 cursor-pointer border-[1px] rounded-[8px] gap-2 transition
                 ${
                   activeTab === "following"
                     ? "bg-green-500 text-white"
