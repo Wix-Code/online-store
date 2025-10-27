@@ -3,7 +3,7 @@
 import { useGetProductById } from "@/app/api/products";
 import ItemCard from "@/app/components/ItemCard";
 import { products } from "@/app/dummyData";
-import { Eye, Heart, MapPin } from "lucide-react";
+import { CameraIcon, ChevronLeft, ChevronRight, Eye, Heart, MapPin } from "lucide-react";
 import { useState, use } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -16,6 +16,8 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
   const resolvedParams = use(params);
   const [showContact, setShowContact] = useState(false);
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [mainSwiper, setMainSwiper] = useState<any>(null);
 
   const productId = Number(resolvedParams.slug.split("-")[0]);
   const { data, isLoading, error } = useGetProductById(productId);
@@ -25,7 +27,6 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
 
   const product = data.product;
 
-  // Replace with your actual product image array
   const images = [
     product.imageUrl || "/placeholder.png",
     "https://pictures-nigeria.jijistatic.net/181275610_MzAwLTQwMC0wNzAwZTlhYWFh.webp",
@@ -40,22 +41,44 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
         {/* Left Section */}
         <div className="flex-[70%] overflow-hidden w-full">
           {/* Main Image Slider */}
-          <Swiper
-            modules={[Navigation, Thumbs]}
-            navigation
-            thumbs={{ swiper: thumbsSwiper }}
-            className="mb-3 rounded-md"
-          >
-            {images.map((img, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  className="w-full h-[300px] sm:h-[450px] md:h-[600px] lg:h-[700px] object-cover rounded-md"
-                  src={img}
-                  alt={product.name}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <div className="relative">
+            <Swiper
+              modules={[Navigation, Thumbs]}
+              onSwiper={setMainSwiper}
+              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+              thumbs={{ swiper: thumbsSwiper }}
+              className="mb-3 rounded-md"
+            >
+              {images.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <div className="relative">
+                    <img
+                      className="w-full h-[300px] sm:h-[450px] md:h-[600px] lg:h-[700px] object-cover rounded-md"
+                      src={img}
+                      alt={product.name}
+                    />
+                    <p className="w-10 h-7 text-[14px] justify-center gap-1 text-gray-800 flex items-center shadow-md bg-[#ffffff] top-1 left-1 absolute">
+                      <CameraIcon size={16} /> {images.length}
+                    </p>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* ✅ Custom Navigation Buttons */}
+            <button
+              onClick={() => mainSwiper?.slidePrev()}
+              className="absolute top-1/2 left-3 -translate-y-1/2 cursor-pointer bg-white/80 hover:bg-white text-gray-800 p-2 md:p-4 rounded-full shadow-md z-10 transition"
+            >
+              <ChevronLeft className="text-green-500" size={26} />
+            </button>
+            <button
+              onClick={() => mainSwiper?.slideNext()}
+              className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer bg-white/80 hover:bg-white text-green-800 p-2 md:p-4 rounded-full shadow-md z-10 transition"
+            >
+              <ChevronRight className="text-green-500" size={26} />
+            </button>
+          </div>
 
           {/* Thumbnail Slider */}
           <Swiper
@@ -69,15 +92,21 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
             {images.map((img, index) => (
               <SwiperSlide key={index} className="!w-auto">
                 <img
-                  className={`w-[120px] sm:w-[150px] md:w-[180px] h-[120px] sm:h-[150px] md:h-[180px] object-cover rounded-md cursor-pointer border ${ img === index && "border-green-500"} hover:opacity-80`}
+                  className={`w-[120px] sm:w-[150px] md:w-[180px] h-[120px] sm:h-[150px] md:h-[180px] object-cover rounded-md cursor-pointer border-2 ${
+                    index === activeIndex ? "border-green-500" : "border-transparent"
+                  } hover:opacity-80`}
                   src={img}
                   alt={`Thumbnail ${index + 1}`}
+                  onClick={() => {
+                    mainSwiper.slideTo(index);
+                    setActiveIndex(index);
+                  }}
                 />
               </SwiperSlide>
             ))}
           </Swiper>
 
-          {/* Product Details Section */}
+          {/* Product Details */}
           <div className="w-full bg-[#fafafa] border flex flex-col space-y-7 p-4 border-[#f5f5f5] rounded-md">
             <div className="space-y-2">
               <div className="flex flex-col sm:flex-row justify-between gap-2 items-start sm:items-center">
@@ -177,9 +206,7 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
                 Chat Vendor
               </a>
               <a
-                href="https://wa.me/2348125352020"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="tel:08125352020"
                 className="w-full h-[46px] gap-2 rounded-[8px] bg-green-500 flex items-center justify-center text-white hover:bg-green-600 transition"
               >
                 <FaWhatsapp className="text-[20px]" />
@@ -203,9 +230,7 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
               <li className="text-[14px] text-[#555555] font-[400]">
                 Make sure that the packed item is the one you've inspected
               </li>
-              <li className="text-[14px] text-[#555555] font-[400]">
-                Only pay if you're satisfied
-              </li>
+              <li className="text-[14px] text-[#555555] font-[400]">Only pay if you're satisfied</li>
             </ul>
           </div>
 

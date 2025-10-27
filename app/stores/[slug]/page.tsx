@@ -24,16 +24,16 @@ const Page = ({ params }: Props) => {
   // 🔹 Skeleton Loader (while fetching store)
   if (isLoading) {
     return (
-      <div className="max-w-[1000px] mt-8 m-auto space-y-6 animate-pulse">
+      <div className="max-w-[1000px] mt-8 m-auto space-y-6 animate-pulse px-4">
         {/* Header Skeleton */}
-        <div className="flex justify-between items-center">
-          <div className="h-10 w-[400px] bg-gray-200 rounded" />
-          <div className="h-10 w-[120px] bg-gray-200 rounded" />
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="h-10 w-full sm:w-[400px] bg-gray-200 rounded" />
+          <div className="h-10 w-full sm:w-[120px] bg-gray-200 rounded" />
         </div>
 
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Skeleton */}
-          <div className="flex-[25%] space-y-4">
+          <div className="flex-[25%] space-y-4 w-full lg:w-auto">
             <div className="h-[200px] bg-gray-200 rounded" />
             <div className="h-10 bg-gray-200 rounded" />
             <div className="h-10 bg-gray-200 rounded" />
@@ -41,7 +41,7 @@ const Page = ({ params }: Props) => {
           </div>
 
           {/* Products Grid Skeleton */}
-          <div className="flex-[75%] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex-[75%] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 w-full">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
@@ -65,34 +65,34 @@ const Page = ({ params }: Props) => {
   const store = data.store;
 
   return (
-    <div className="max-w-[1000px] mt-8 space-y-6 m-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <SearchInput onChange={() => {}} value="" className="w-[400px]" />
-        <SortFilter />
+    <div className="max-w-[1100px] mt-8 space-y-6 m-auto px-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <SearchInput onChange={() => {}} value="" className="w-full sm:w-[400px]" />
+        <div className="w-full sm:w-auto">
+          <SortFilter />
+        </div>
       </div>
 
-      <div className="gap-4 flex">
-        {/* Sidebar */}
-        <div className="flex-[25%] space-y-5">
+      <div className="gap-6 flex flex-col lg:flex-row">
+        <div className="flex-[25%] space-y-5 w-full lg:w-auto">
           {/* Store Card */}
           <div
             style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px" }}
-            className="flex-[25%] bg-[#fafafa] border flex justify-center items-center space-y-2 flex-col p-5 border-[#f5f5f5] rounded-[10px] transition-all hover:shadow-md"
+            className="bg-[#fafafa] border flex justify-center items-center flex-col space-y-2 p-5 border-[#f5f5f5] rounded-[10px] transition-all hover:shadow-md"
           >
             <img
               className="w-[100px] h-[100px] object-cover rounded-full ring-2 ring-green-500/20"
               src={store.imageUrl}
               alt={store.name}
             />
-            <p className="text-[18px] font-[700] text-gray-800 flex items-center gap-2">
+            <p className="text-[18px] font-[700] text-gray-800 flex items-center gap-2 text-center">
               <FaStore className="text-green-600" /> {store.name}
             </p>
             <p className="text-[13px] text-gray-500 font-[400]">6y 1m on Jiji</p>
           </div>
 
           {/* Contact Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-3 w-full">
             <a
               href="https://wa.me/2348125352020"
               target="_blank"
@@ -124,8 +124,8 @@ const Page = ({ params }: Props) => {
         </div>
 
         {/* Products Grid */}
-        <div className="flex-[75%]">
-          <div className="grid grid-cols-1 bg-white sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="flex-[75%] w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
             {store.products.map((item: any) => (
               <div
                 key={item.id}
@@ -135,7 +135,7 @@ const Page = ({ params }: Props) => {
                   <img
                     src={item.imageUrl}
                     alt={item.name}
-                    className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-[220px] sm:h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <button className="absolute top-3 right-3 bg-white/80 hover:bg-white rounded-full p-1 shadow-md">
                     <Heart className="w-[16px] text-gray-600" />
