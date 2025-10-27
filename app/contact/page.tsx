@@ -7,7 +7,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 const ContactPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-16 px-6">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10 items-start">
+      <div className="max-w-6xl mx-auto overflow-hidden flex flex-col md:flex-row gap-10 items-start">
         {/* Left: Info Section */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -22,7 +22,7 @@ const ContactPage = () => {
           />
 
           <div className="space-y-4 text-gray-700">
-            <h1 className="text-3xl font-bold text-green-700">Contact Us</h1>
+            <h1 className="md:text-3xl text-[26px] font-bold text-green-700">Contact Us</h1>
             <p className="text-[15px] leading-relaxed">
               We’re always here to help! Whether you have a question about your
               account, a product listing, or anything else — our support team is
@@ -52,9 +52,9 @@ const ContactPage = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex-1 bg-white p-8 rounded-xl shadow-lg"
+          className="flex-1 w-full bg-white md:p-8 p-4 rounded-xl shadow-lg"
         >
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+          <h2 className="md:text-2xl text-[20px] font-semibold mb-6 text-gray-800">
             Send Us a Message
           </h2>
 

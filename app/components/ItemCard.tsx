@@ -14,7 +14,7 @@ const ItemCard = ({ id, description, image, price, location }: Props) => {
   return (
     <div
       key={id}
-      className="group flex flex-col gap-2 cursor-pointer rounded-lg border border-[#f1f1f1] p-2 shadow-sm hover:shadow-md transition-all duration-300 mb-4 bg-white"
+      className="group flex flex-col gap-2 cursor-pointer rounded-lg border border-[#f1f1f1] p-2 shadow-sm hover:shadow-md transition-all duration-300 md:mb-4 bg-white"
     >
       {/* Product Image */}
       <div className="relative w-full h-[200px] overflow-hidden rounded-md">
