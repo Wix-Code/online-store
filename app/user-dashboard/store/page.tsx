@@ -7,15 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, Store, MapPin, Loader2 } from "lucide-react";
 import { useCreateStore } from "@/app/api/stores";
+import { toast } from "react-toastify";
 
 const EditStore = () => {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
   const storeApi = useCreateStore();
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     reset,
   } = useForm({
@@ -28,22 +31,27 @@ const EditStore = () => {
     },
   });
 
-  // ✅ Check for token
+  // ✅ Check for token on mount
   useEffect(() => {
-    const token = localStorage.getItem("auth-token");
-    if (token) {
-      setAuthorized(true);
-    } else {
-      setAuthorized(false);
-    }
+    const token = localStorage.getItem("token");
+    setAuthorized(!!token);
   }, []);
 
+  // ✅ Handle file selection + preview
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+      setValue("imageUrl", String(file)); // store actual file for upload
+    }
+  };
+
   const onSubmit = async (data: any) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem("user-object") || "{}");
 
-      await storeApi.mutateAsync({
+      const response = await storeApi.mutateAsync({
         name: data.name,
         description: data.description,
         imageUrl: data.imageUrl || "",
@@ -51,16 +59,25 @@ const EditStore = () => {
         owner: user?.id || 1, // fallback
       });
 
-      alert("Store created successfully!");
+      toast.success(response?.data?.message);
       reset();
-      setLoading(false)
-    } catch (error) {
+      setPreview(null);
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to create store");
-      setLoading(false)
+
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Something went wrong!");
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
+  // 🚫 Unauthorized message
   if (!authorized) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center">
@@ -68,7 +85,11 @@ const EditStore = () => {
           You must be registered before accessing this dashboard.
         </h1>
         <p className="text-gray-500">
-          Please <a href="/" className="text-green-600 underline">go to the homepage</a> and log in first.
+          Please{" "}
+          <a href="/" className="text-green-600 underline">
+            go to the homepage
+          </a>{" "}
+          and log in first.
         </p>
       </div>
     );
@@ -102,7 +123,9 @@ const EditStore = () => {
             <Textarea
               rows={4}
               placeholder="Describe your store..."
-              {...register("description", { required: "Description is required" })}
+              {...register("description", {
+                required: "Description is required",
+              })}
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">
@@ -128,37 +151,56 @@ const EditStore = () => {
             )}
           </div>
 
-          {/* Image Upload */}
+          {/* ✅ Image Upload with Preview */}
           <div>
             <label className="block text-sm font-medium mb-2">Store Logo</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
-              <Upload className="text-gray-500 mb-2" size={28} />
-              <p className="text-sm text-gray-500">Click to upload logo</p>
-              <Input
-                type="file"
-                accept="image/*"
-                {...register("imageUrl")}
-                className="hidden"
-              />
+
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 relative"
+              onClick={() => document.getElementById("store-logo")?.click()}
+            >
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-24 h-24 object-cover rounded-full border"
+                />
+              ) : (
+                <>
+                  <Upload className="text-gray-500 mb-2" size={28} />
+                  <p className="text-sm text-gray-500">Click to upload logo</p>
+                </>
+              )}
             </div>
+
+            <Input
+              id="store-logo"
+              type="file"
+              accept="image/*"
+              {...register("imageUrl")}
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
 
           {/* Submit Button */}
           <div className="pt-4">
             <button
               type="submit"
-              disabled={storeApi.isPending}
-              className={`w-full text-white px-6 py-3 rounded-lg ${
-                storeApi.isPending ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+              disabled={loading}
+              className={`w-full flex items-center justify-center text-white px-6 py-3 rounded-lg transition ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
               }`}
             >
               {loading ? (
                 <>
                   <Loader2 className="animate-spin mr-2 h-5 w-5" />
-                  Signing In...
+                  Creating Store...
                 </>
               ) : (
-                "Sign In"
+                "Create Store"
               )}
             </button>
           </div>
