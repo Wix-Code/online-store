@@ -2,22 +2,56 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useLoginUser } from "../api/auth";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loginApi = useLoginUser()
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login Data:", form);
-    // Here you'd handle your sign-in logic (API call or Firebase auth)
-  };
+    setLoading(true)
+
+  try {
+    // ✅ Wait for the API call to resolve
+    const login = await loginApi.mutateAsync({
+      email: form.email,
+      password: form.password,
+    });
+
+    console.log("Login Data:", login);
+
+    // ✅ Show success toast
+    toast.success(login?.data?.message || "Login successful!");
+
+    // Optionally, store token or navigate
+    localStorage.setItem("token", login?.data?.token);
+    localStorage.setItem("user-object", JSON.stringify(login?.data?.user));
+    router.push("/user-dashboard/post");
+    setLoading(false)
+
+  } catch (error: any) {
+    console.error("Login error:", error);
+
+    // ✅ Show error toast
+    const errorMsg =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Login failed. Please try again.";
+    toast.error(errorMsg);
+    setLoading(false)
+  }
+};
 
   const handleGoogleLogin = () => {
     console.log("Google login clicked");
@@ -81,9 +115,19 @@ const SignInPage = () => {
 
           <button
             type="submit"
-            className="w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition"
+            disabled={loading}
+            className={`w-full cursor-pointer flex items-center justify-center bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition ${
+              loading ? "opacity-80 cursor-not-allowed" : ""
+            }`}
           >
-            Sign In
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 

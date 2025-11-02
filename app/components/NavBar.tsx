@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ShoppingBag,
   Settings,
@@ -21,10 +21,21 @@ const NavBar = () => {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem("user-object") || "{}");
+
   // Simulated auth user
-  const user = { id: null, name: "Wisdom" }; // null = not logged in
+  //const user = { id: null, name: "Wisdom" }; // null = not logged in
   const unreadMessages = 3;
   const unreadNotifications = 5;
+
+  const router = useRouter()
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user-object");
+    router.push("/")
+  };
+
 
   return (
     <header
@@ -87,7 +98,7 @@ const NavBar = () => {
 
           {/* Profile / Auth */}
           <div className="relative group hidden md:block">
-            {!user?.id ? (
+            {user?.id ? (
               <>
                 <div className="w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
                   <Settings className="text-gray-700" size={20} />
@@ -109,7 +120,7 @@ const NavBar = () => {
                   >
                     <Settings size={18} /> Settings
                   </Link>
-                  <button className="flex items-center gap-3 w-full text-left hover:text-green-600">
+                  <button onClick={logout} className="flex items-center gap-3 w-full text-left hover:text-green-600">
                     <LogOut size={18} /> Logout
                   </button>
                 </div>
@@ -198,7 +209,7 @@ const NavBar = () => {
 
               {/* Footer (Auth Section) */}
               <div className="border-t border-gray-200 p-4 flex flex-col gap-3 bg-gray-50">
-                {!user?.id ? (
+                {user?.id ? (
                   <>
                     <Link
                       href="/user-dashboard/post"
@@ -214,7 +225,7 @@ const NavBar = () => {
                     >
                       <Settings size={18} /> Settings
                     </Link>
-                    <button className="flex items-center gap-3 text-left hover:text-green-600">
+                    <button onClick={logout} className="flex items-center gap-3 text-left hover:text-green-600">
                       <LogOut size={18} /> Logout
                     </button>
                   </>

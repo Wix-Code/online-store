@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import {
   User,
@@ -11,9 +11,15 @@ import {
   Bell,
   MessageSquare,
 } from "lucide-react"; // ✅ icons
+import { token } from "./authFunctions";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter()
+
+  if (!token) {
+    router.push("/")
+  }
 
   const links = [
     { href: "/user-dashboard/setting", label: "Manage Profile", icon: User },

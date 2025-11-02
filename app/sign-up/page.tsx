@@ -4,15 +4,21 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useRegisterUser } from "../api/auth";
+import { mutationOptions } from "@tanstack/react-query";
 
 const SignupPage = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });
+
+  const registerApi = useRegisterUser()
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,7 +26,14 @@ const SignupPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup details:", formData);
+    const register = registerApi.mutateAsync({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      password: formData.password,
+      email: formData.email
+    })
+
+    console.log("Signup details:", register);
     // send to API or backend here
   };
 
@@ -58,13 +71,28 @@ const SignupPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Full Name
+              First Name
             </label>
             <input
               type="text"
-              name="fullName"
+              name="FisrtName"
               placeholder="John Doe"
-              value={formData.fullName}
+              value={formData.firstName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              placeholder="John Doe"
+              value={formData.lastName}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
