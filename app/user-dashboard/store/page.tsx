@@ -1,38 +1,84 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import DashboardLayout from "@/app/components/DashboardLayout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Store, MapPin, Phone, Mail } from "lucide-react";
+import { Upload, Store, MapPin, Loader2 } from "lucide-react";
+import { useCreateStore } from "@/app/api/stores";
 
 const EditStore = () => {
+  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const storeApi = useCreateStore();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
-      storeName: "AbjonTech Store",
-      description: "Your one-stop shop for tech gadgets and accessories.",
-      location: "Lagos, Nigeria",
-      phone: "+2348123456789",
-      email: "store@example.com",
+      name: "",
+      description: "",
+      location: "",
+      owner: "",
+      imageUrl: "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Updated store info:", data);
-    alert("Store information updated successfully!");
+  // ✅ Check for token
+  useEffect(() => {
+    const token = localStorage.getItem("auth-token");
+    if (token) {
+      setAuthorized(true);
+    } else {
+      setAuthorized(false);
+    }
+  }, []);
+
+  const onSubmit = async (data: any) => {
+    setLoading(true)
+    try {
+      const user = JSON.parse(localStorage.getItem("user-object") || "{}");
+
+      await storeApi.mutateAsync({
+        name: data.name,
+        description: data.description,
+        imageUrl: data.imageUrl || "",
+        location: data.location,
+        owner: user?.id || 1, // fallback
+      });
+
+      alert("Store created successfully!");
+      reset();
+      setLoading(false)
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create store");
+      setLoading(false)
+    }
   };
+
+  if (!authorized) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center">
+        <h1 className="text-2xl font-semibold mb-4 text-red-500">
+          You must be registered before accessing this dashboard.
+        </h1>
+        <p className="text-gray-500">
+          Please <a href="/" className="text-green-600 underline">go to the homepage</a> and log in first.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <DashboardLayout>
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Store className="text-green-600" /> Edit Store
+          <Store className="text-green-600" /> Add Store
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -41,11 +87,11 @@ const EditStore = () => {
             <label className="block text-sm font-medium mb-1">Store Name</label>
             <Input
               placeholder="Enter your store name"
-              {...register("storeName", { required: "Store name is required" })}
+              {...register("name", { required: "Store name is required" })}
             />
-            {errors.storeName && (
+            {errors.name && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.storeName.message as string}
+                {errors.name.message as string}
               </p>
             )}
           </div>
@@ -66,17 +112,15 @@ const EditStore = () => {
           </div>
 
           {/* Location */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
               <MapPin className="text-gray-400" size={18} />
-              <label className="block text-sm font-medium mb-1">Location</label>
+              <label className="text-sm font-medium">Location</label>
             </div>
-            <div className="flex items-center gap-2">
-              <Input
-                placeholder="Enter your store location"
-                {...register("location", { required: "Location is required" })}
-              />
-            </div>
+            <Input
+              placeholder="Enter your store location"
+              {...register("location", { required: "Location is required" })}
+            />
             {errors.location && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.location.message as string}
@@ -84,42 +128,18 @@ const EditStore = () => {
             )}
           </div>
 
-          {/* Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Phone className="text-gray-400" size={18} />
-                <label className="block text-sm font-medium mb-1">Phone</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Enter store phone number"
-                  {...register("phone", { required: "Phone number is required" })}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Mail className="text-gray-400" size={18} />
-                <label className="block text-sm font-medium mb-1">Email</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter store email"
-                  {...register("email", { required: "Email is required" })}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Upload Section */}
+          {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium mb-2">Store Logo</label>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
               <Upload className="text-gray-500 mb-2" size={28} />
               <p className="text-sm text-gray-500">Click to upload logo</p>
-              <Input type="file" accept="image/*" className="hidden" />
+              <Input
+                type="file"
+                accept="image/*"
+                {...register("imageUrl")}
+                className="hidden"
+              />
             </div>
           </div>
 
@@ -127,9 +147,19 @@ const EditStore = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="bg-green-600 cursor-pointer hover:bg-green-700 w-full text-white px-6 py-3 rounded-lg"
+              disabled={storeApi.isPending}
+              className={`w-full text-white px-6 py-3 rounded-lg ${
+                storeApi.isPending ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+              }`}
             >
-              Save Changes
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                  Signing In...
+                </>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </div>
         </form>

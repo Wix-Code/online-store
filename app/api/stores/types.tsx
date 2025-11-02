@@ -1,13 +1,13 @@
 export interface Store {
-  id: number;
-  name: string;
-  description: string;
-  location: string;
-  owner: number;   // userId of the owner
-  imageUrl: string | null;
-  categoryId: number;
-  createdAt: string; 
-  updatedAt: string; 
+  id?: number;
+  name?: string;
+  description?: string;
+  location?: string;
+  owner?: number;   // userId of the owner
+  imageUrl?: string | null;
+  categoryId?: number;
+  createdAt?: string; 
+  updatedAt?: string; 
 }
 
 export interface Pagination {
@@ -33,9 +33,14 @@ export interface GetAllStoresResponse {
 export interface CreateStoreRequest {
   name: string;
   description: string;
-  imageUrl: string[];
+  imageUrl: string;
   location: string;
   owner: number;   // userId of the owner
-  storeId: number;
-  category: string; // category name (could also be categoryId depending on schema)
+  category?: string; // category name (could also be categoryId depending on schema)
+}
+
+export interface CreateStoreResponse {
+  status: boolean;
+  message: string;
+  store: Store;
 }

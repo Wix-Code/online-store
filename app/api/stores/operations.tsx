@@ -2,7 +2,7 @@ import { customAxiosInstance } from "@/app/BaseUrl"
 import { CreateStoreRequest } from "./types";
 
 export const createStore = async (data: CreateStoreRequest) => {
-  return await customAxiosInstance.post(`/stores`, data)
+  return await customAxiosInstance.post<CreateStoreRequest>(`/stores`, data)
 }
 
 export const getAllStores = async ({ pageParam = 1, params }: { pageParam?: number; params: any }) => {

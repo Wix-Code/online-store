@@ -1,7 +1,8 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   User,
   PlusSquare,
@@ -10,15 +11,56 @@ import {
   Users,
   Bell,
   MessageSquare,
-} from "lucide-react"; // ✅ icons
-import { token } from "./authFunctions";
+} from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter()
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
 
-  if (!token) {
-    router.push("/")
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setHasAccess(true);
+    }
+    setIsCheckingAuth(false);
+  }, []);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-600 text-sm">Checking authentication...</p>
+      </div>
+    );
+  }
+
+  // ❌ If no token, show restricted access message
+  if (!hasAccess) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 text-center px-4">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+          Access Restricted 🚫
+        </h2>
+        <p className="text-gray-600 mb-6">
+          You must be signed in to access your dashboard.
+        </p>
+        <div className="flex gap-4">
+          <Link
+            href="/sign-in"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/sign-up"
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md font-medium transition"
+          >
+            Create Account
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const links = [
