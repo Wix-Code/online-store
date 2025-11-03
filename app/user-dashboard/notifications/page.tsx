@@ -2,9 +2,9 @@
 
 import DashboardLayout from "@/app/components/DashboardLayout";
 import { Bell, Clock, Loader2, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import DeleteModal from "./components/DeleteModal";
-import { useGetNotificationsByUserId, useMarkAllNotificationAsRead, useMarkNotificationAsRead } from "@/app/api/notifications";
+import { useDeleteNotification, useGetNotificationsByUserId, useMarkAllNotificationAsRead, useMarkNotificationAsRead } from "@/app/api/notifications";
 import { formatTimeAgo } from "@/app/components/format";
 
 // const notifications = [
@@ -32,6 +32,7 @@ import { formatTimeAgo } from "@/app/components/format";
 // ];
 
 const Notifications = () => {
+  const [openModal, setOpenModal] = useState(false)
   const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
 
   const { data, isLoading } = useGetNotificationsByUserId(user?.id)
@@ -52,10 +53,13 @@ const Notifications = () => {
 
   const notifications = data?.data?.notifications
 
-  const { mutateAsync: deleteNotificationId, isPending: load } = useMarkNotificationAsRead()
+  const { mutateAsync: deleteNotificationId, isPending: load } = useDeleteNotification()
   
   const deleteNotification = (id: number) => {
     deleteNotificationId(id)
+    setOpenModal(false)
+
+    console.log(id, "id to delete")
   }
 
   console.log(data?.data?.notifications)
