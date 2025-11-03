@@ -16,10 +16,14 @@ export const markMessageAsRead = async (data: MessageRequest) => {
   //return res.data
 }
 
-export const getMessage = async () => {
-  return await customAxiosInstance.get<SendMessageResponse>(`/message`)
-  //return res.data
-}
+// ✅ Fetch messages for a specific conversation
+export const getMessage = async (conversationId: number, limit = 50, offset = 0) => {
+  const res = await customAxiosInstance.get(`/messages`, {
+    params: { conversationId, limit, offset },
+  });
+  return res.data;
+};
+
 
 export const getUserConversations = async (id: number) => {
   return await customAxiosInstance.get<GetConversationsResponse>(`/messages/conversations/${id}`)

@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageRequest } from "./types";
-import { markMessageAsRead, sendConversation, sendMessage } from "./operations";
+import { getMessage, getUserConversations, markMessageAsRead, sendConversation, sendMessage } from "./operations";
 
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
@@ -38,5 +38,21 @@ export const useMarkMessageAsRead = () => {
       // ✅ Invalidate notifications so UI refreshes
       queryClient.invalidateQueries({ queryKey: ["message"] });
     },
+  });
+};
+
+export const useGetMessages = (conversationId?: number) => {
+  return useQuery({
+    queryKey: ["message", conversationId],
+    queryFn: () => getMessage(conversationId!),
+    enabled: !!conversationId, // ✅ only fetch when we have a valid conversationId
+  });
+};
+
+export const useGetUserConversations = (userId?: number) => {
+  return useQuery({
+    queryKey: ["conversations", userId],
+    queryFn: () => getUserConversations(userId!),
+    enabled: !!userId, // Only fetch when we have a userId
   });
 };
