@@ -16,12 +16,16 @@ import {
 } from "lucide-react";
 import { navLinks } from "../dummyData";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGetNotificationsByUserId } from "../api/notifications";
 
 const NavBar = () => {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
+  const { data, isLoading  } = useGetNotificationsByUserId(user?.id)
+  
+  const unReadNotifications = data?.data?.unreadCount ?? 0
 
   const unreadMessages = 3;
   const unreadNotifications = 5;
@@ -87,9 +91,9 @@ const NavBar = () => {
           {/* Notifications */}
           <Link href="/user-dashboard/notifications" className="relative w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
             <Bell className="text-gray-700" size={22} />
-            {unreadNotifications > 0 && (
+            {unReadNotifications > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
-                {unreadNotifications}
+                {unReadNotifications}
               </span>
             )}
           </Link>

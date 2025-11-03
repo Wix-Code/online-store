@@ -7,14 +7,16 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 const DeleteModal = ({
   children,
-  onConfirm,
+  onDelete,
+  load,
 }: {
   children: React.ReactNode;
-  onConfirm?: () => void;
+  onDelete?: () => void;
+  load?: boolean
 }) => {
   return (
     <Dialog>
@@ -51,10 +53,14 @@ const DeleteModal = ({
             </Button>
             <Button
               size="sm"
-              className="bg-red-600 flex-1 py-5 cursor-pointer hover:bg-red-700 text-white"
-              onClick={onConfirm}
+              className="bg-red-600 flex-1 flex justify-center items-center py-5 cursor-pointer hover:bg-red-700 text-white"
+              onClick={onDelete}
             >
-              Delete
+              {load ? (
+                <Loader2 className="animate-spin inline-block w-4 h-4 text-red-500" />
+              ) : (
+                "Delete"
+              )}
             </Button>
           </div>
         </div>

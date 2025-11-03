@@ -18,3 +18,7 @@ export interface GetNotificationsResponse {
   message: string;
   data: NotificationData;
 }
+
+export interface NotificationRequest {
+  id: number
+}
