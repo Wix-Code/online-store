@@ -12,6 +12,7 @@ import {
   Sprout,
   Tractor,
 } from "lucide-react";
+import { useGetCategories } from "@/app/api/categories";
 
 export const categories = [
   { name: "Fresh Farm Produce", icon: Leaf },
@@ -26,6 +27,14 @@ export const categories = [
 ];
 
 const Categories = () => {
+
+  const { data } = useGetCategories();
+
+  // If your API returns { status, categories: [...] }
+  const categoryData = data?.data?.categories ?? [];
+
+  console.log(categoryData, "data for cat");
+
   return (
     <section className="max-w-[1100px] mx-auto px-4 py-10">
       <h2 className="md:text-2xl text-[20px] bg-[#fdfdfd] py-2 border-y-[1px] w-fit border-[#e0e0e0] font-bold text-gray-800 mb-6">

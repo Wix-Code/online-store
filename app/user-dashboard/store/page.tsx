@@ -10,7 +10,6 @@ import { useCreateStore } from "@/app/api/stores";
 import { toast } from "react-toastify";
 
 const EditStore = () => {
-  const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const storeApi = useCreateStore();
@@ -30,12 +29,6 @@ const EditStore = () => {
       imageUrl: "",
     },
   });
-
-  // ✅ Check for token on mount
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setAuthorized(!!token);
-  }, []);
 
   // ✅ Handle file selection + preview
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,24 +69,6 @@ const EditStore = () => {
       setLoading(false);
     }
   };
-
-  // 🚫 Unauthorized message
-  if (!authorized) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen text-center">
-        <h1 className="text-2xl font-semibold mb-4 text-red-500">
-          You must be registered before accessing this dashboard.
-        </h1>
-        <p className="text-gray-500">
-          Please{" "}
-          <a href="/" className="text-green-600 underline">
-            go to the homepage
-          </a>{" "}
-          and log in first.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <DashboardLayout>

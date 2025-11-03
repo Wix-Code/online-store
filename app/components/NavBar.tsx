@@ -21,10 +21,8 @@ const NavBar = () => {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user-object") || "{}");
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
 
-  // Simulated auth user
-  //const user = { id: null, name: "Wisdom" }; // null = not logged in
   const unreadMessages = 3;
   const unreadNotifications = 5;
 
