@@ -35,14 +35,14 @@ const EditStore = () => {
     const file = e.target.files?.[0];
     if (file) {
       setPreview(URL.createObjectURL(file));
-      setValue("imageUrl", String(file)); // store actual file for upload
+      setValue("imageUrl", String(file));
     }
   };
 
   const onSubmit = async (data: any) => {
     setLoading(true);
     try {
-      const user = JSON.parse(localStorage.getItem("user-object") || "{}");
+      const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
 
       const response = await storeApi.mutateAsync({
         name: data.name,
