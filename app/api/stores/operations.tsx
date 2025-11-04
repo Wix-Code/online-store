@@ -23,13 +23,32 @@ export const getAllStores = async ({ pageParam = 1, params }: { pageParam?: numb
   return res.data;
 };
 
-export const updateStore = async (id: number, data: CreateStoreRequest) => {
-  return await customAxiosInstance.put(`/stores/${id}`, data)
-}
+export const updateStore = async (data: CreateStoreRequest) => {
+
+  const res = await customAxiosInstance.post("/stores/update-store", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
 
 export const deleteStore = async (id: number, data: CreateStoreRequest) => {
-  return await customAxiosInstance.delete(`/stores/${id}`, { data })
+  return await customAxiosInstance.delete(`/stores/delete-store/${id}`, { data })
 }
+
+export const getMyStore = async () => {
+
+  const res = await customAxiosInstance.get(`/stores/my-store`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
 
 export const getStoreById = async (id: number) => {
   const res = await customAxiosInstance.get(`/stores/${id}`);

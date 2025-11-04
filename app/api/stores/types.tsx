@@ -1,4 +1,4 @@
-export interface Store {
+export interface Stores {
   id?: number;
   name?: string;
   description?: string;
@@ -20,7 +20,7 @@ export interface Pagination {
 }
 
 export interface StoreData {
-  stores: Store[];
+  stores: Stores[];
   pagination: Pagination;
 }
 
@@ -31,16 +31,17 @@ export interface GetAllStoresResponse {
 }
 
 export interface CreateStoreRequest {
-  name: string;
-  description: string;
-  imageUrl: string;
-  location: string;
-  owner: number;   // userId of the owner
+  id?: number;
+  name?: string;
+  description?: string;
+  imageUrl?: string;
+  location?: string;
+  owner?: number;   // userId of the owner
   category?: string; // category name (could also be categoryId depending on schema)
 }
 
 export interface CreateStoreResponse {
   status: boolean;
   message: string;
-  store: Store;
+  store: Stores;
 }

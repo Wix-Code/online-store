@@ -6,13 +6,39 @@ import DashboardLayout from "@/app/components/DashboardLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, Store, MapPin, Loader2 } from "lucide-react";
-import { useCreateStore } from "@/app/api/stores";
+import { useCreateStore, useGetMyStore, useGetStoreById, useUpdateStore } from "@/app/api/stores";
 import { toast } from "react-toastify";
+import { useParams } from "next/navigation";
+import { Stores } from "@/app/api/stores/types";
+
+type StoreForm = {
+  name: string;
+  description: string;
+  location: string;
+  owner: string;
+  imageUrl: string;
+};
 
 const EditStore = () => {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const storeApi = useCreateStore();
+  const [storeData, setStoreData] = useState<Stores | null>(null);
+
+  const createStore = useCreateStore();
+  const updateStore = useUpdateStore();
+  const params = useParams();
+  const storeId = params?.id ? Number(params.id) : null;
+
+  const { data: storeResponse, isLoading: fetching } = useGetMyStore();
+
+  console.log(storeResponse, "store update now")
+
+  const store = storeResponse?.store
+  useEffect(() => {
+    if (store) {
+      setStoreData(store);
+    }
+  }, [store]);
 
   const {
     register,
@@ -20,7 +46,7 @@ const EditStore = () => {
     setValue,
     formState: { errors },
     reset,
-  } = useForm({
+  } = useForm<StoreForm>({
     defaultValues: {
       name: "",
       description: "",
@@ -30,71 +56,107 @@ const EditStore = () => {
     },
   });
 
+  // ✅ Prefill when editing
+  useEffect(() => {
+    if (storeData?.id) {
+      reset({
+        name: storeData.name,
+        description: storeData.description,
+        location: storeData.location,
+        owner: String(storeData.owner),
+        imageUrl: storeData.imageUrl || "",
+      });
+      setPreview(storeData.imageUrl || null);
+    }
+  }, [storeData, reset]);
+
   // ✅ Handle file selection + preview
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setPreview(URL.createObjectURL(file));
-      setValue("imageUrl", String(file));
+      setValue("imageUrl", file.name); // You may handle uploads separately
     }
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: StoreForm) => {
     setLoading(true);
     try {
-      const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
+      const user =
+        typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem("user-object") || "{}")
+          : {};
 
-      const response = await storeApi.mutateAsync({
+      const payload = {
         name: data.name,
         description: data.description,
         imageUrl: data.imageUrl || "",
         location: data.location,
-        owner: user?.id || 1, // fallback
-      });
+        owner: user?.id || 1,
+      };
 
-      toast.success(response?.data?.message);
+      let response;
+      if (storeData?.id) {
+        // ✅ Update store
+        response = await updateStore.mutateAsync({id: storeData?.id, ...payload });
+        toast.success(response?.data?.message || "Store updated successfully!");
+      } else {
+        // ✅ Create new store
+        response = await createStore.mutateAsync(payload);
+        setStoreData(response?.data?.store);
+        toast.success(response?.data?.message || "Store created successfully!");
+      }
+
       reset();
       setPreview(null);
     } catch (error: any) {
       console.error(error);
-
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error || "Something went wrong!");
-      } else if (error.message) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred.");
-      }
+      toast.error(error.response?.data?.error || error.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
   };
 
+  if (fetching) {
+    return (
+      <DashboardLayout>
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="animate-spin text-green-600 w-8 h-8" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Store className="text-green-600" /> Add Store
+          <Store className="text-green-600" />{" "}
+          {storeData?.id ? "Edit Store" : "Add Store"}
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Store Name */}
           <div>
-            <label className="block text-sm font-medium mb-1">Store Name</label>
+            <label className="block text-sm font-medium mb-1">
+              Store Name
+            </label>
             <Input
               placeholder="Enter your store name"
               {...register("name", { required: "Store name is required" })}
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.name.message as string}
+                {errors.name.message}
               </p>
             )}
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
+            <label className="block text-sm font-medium mb-1">
+              Description
+            </label>
             <Textarea
               rows={4}
               placeholder="Describe your store..."
@@ -104,7 +166,7 @@ const EditStore = () => {
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.description.message as string}
+                {errors.description.message}
               </p>
             )}
           </div>
@@ -121,14 +183,16 @@ const EditStore = () => {
             />
             {errors.location && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.location.message as string}
+                {errors.location.message}
               </p>
             )}
           </div>
 
-          {/* ✅ Image Upload with Preview */}
+          {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium mb-2">Store Logo</label>
+            <label className="block text-sm font-medium mb-2">
+              Store Logo
+            </label>
 
             <div
               className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 relative"
@@ -143,7 +207,9 @@ const EditStore = () => {
               ) : (
                 <>
                   <Upload className="text-gray-500 mb-2" size={28} />
-                  <p className="text-sm text-gray-500">Click to upload logo</p>
+                  <p className="text-sm text-gray-500">
+                    Click to upload logo
+                  </p>
                 </>
               )}
             </div>
@@ -163,7 +229,7 @@ const EditStore = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full flex items-center justify-center text-white px-6 py-3 rounded-lg transition ${
+              className={`w-full flex cursor-pointer items-center justify-center text-white px-6 py-3 rounded-lg transition ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-700"
@@ -172,8 +238,10 @@ const EditStore = () => {
               {loading ? (
                 <>
                   <Loader2 className="animate-spin mr-2 h-5 w-5" />
-                  Creating Store...
+                  {storeData?.id ? "Updating Store..." : "Creating Store..."}
                 </>
+              ) : storeData?.id ? (
+                "Update Store"
               ) : (
                 "Create Store"
               )}

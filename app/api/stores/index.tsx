@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createStore, deleteStore, getAllStores, getStoreById, updateStore } from "./operations";
+import { createStore, deleteStore, getAllStores, getMyStore, getStoreById, updateStore } from "./operations";
 import { CreateStoreRequest } from "./types";
+import { customAxiosInstance } from "@/app/BaseUrl";
 
 export const useCreateStore = () => {
   const queryClient = useQueryClient();
@@ -10,7 +11,7 @@ export const useCreateStore = () => {
 
     // ✅ Invalidate stores list after creating
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["stores"] });
+      queryClient.invalidateQueries({ queryKey: ["myStore"] });
     },
   });
 };
@@ -33,12 +34,9 @@ export const useUpdateStore = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: CreateStoreRequest }) =>
-      updateStore(id, data),
-
-    // ✅ Invalidate products list after updating
+    mutationFn: updateStore,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["stores"] });
+      queryClient.invalidateQueries({ queryKey: ["myStore"] });
     },
   });
 };
@@ -62,5 +60,12 @@ export const useGetStoreById = (id: number) => {
     queryKey: ["store", id],
     queryFn: () => getStoreById(id),
     enabled: !!id, // only run if id exists
+  });
+};
+
+export const useGetMyStore = () => {
+  return useQuery({
+    queryKey: ["myStore"],
+    queryFn: getMyStore,
   });
 };

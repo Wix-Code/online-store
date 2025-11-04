@@ -11,6 +11,7 @@ import {
   Users,
   Bell,
   MessageSquare,
+  Loader2,
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -30,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (isCheckingAuth) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600 text-sm">Checking authentication...</p>
+        <Loader2 className="animate-spin text-green-600 w-10 h-10" />
       </div>
     );
   }
