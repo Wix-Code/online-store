@@ -9,6 +9,7 @@ import {
   useSendConversation,
   useSendMessage,
 } from "@/app/api/messages";
+import { formatTimeAgo } from "@/app/components/format";
 
 const shortMessage = [
   "Last Price",
@@ -33,10 +34,8 @@ const MessagesPage = () => {
   const [message, setMessage] = useState("");
 
   // ✅ React Query hooks
-  const { data: conversationData, isLoading: convoLoading } =
-    useGetUserConversations(user?.id);
-  const { mutateAsync: createConversationApi, isPending: isCreating } =
-    useSendConversation();
+  const { data: conversationData, isLoading: convoLoading } = useGetUserConversations(user?.id);
+  const { mutateAsync: createConversationApi, isPending: isCreating } = useSendConversation();
   const { mutateAsync: sendMessageApi, isPending: isSending } = useSendMessage();
 
   // ✅ Get messages for current conversation
@@ -225,10 +224,7 @@ const MessagesPage = () => {
                     >
                       {msg.content}
                       <div className="text-[10px] mt-1 text-gray-300 text-right">
-                        {new Date(msg.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {formatTimeAgo(msg?.createdAt)}
                       </div>
                     </div>
                   </div>
@@ -283,8 +279,9 @@ const MessagesPage = () => {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400">
-            Select a chat to start messaging
+          <div className="flex items-center justify-center flex-col gap-2 h-full text-gray-400">
+            <img src="https://assets.jijistatic.net/static/img/profile/messenger-girl.svg" alt="" />
+            <p>Select a chat to start messaging</p>
           </div>
         )}
       </div>
