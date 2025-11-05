@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateAuthRequest } from "./types";
-import { login, register } from "./operations";
+import { deleteUser, getUserProfile, login, register, updateUserProfile } from "./operations";
 
 export const useRegisterUser = () => {
   const queryClient = useQueryClient();
@@ -21,5 +21,42 @@ export const useLoginUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["login"] });
     },
+  });
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateUserProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+};
+
+// export const useGetStoreById = (id: number) => {
+//   return useQuery({
+//     queryKey: ["store", id],
+//     queryFn: () => getStoreById(id),
+//     enabled: !!id, // only run if id exists
+//   });
+// };
+
+export const useGetUserProfile = () => {
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: getUserProfile,
   });
 };
