@@ -1,21 +1,50 @@
 "use client";
 
 import DashboardLayout from "@/app/components/DashboardLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Camera, Save } from "lucide-react";
+import { Camera, Save, Loader2 } from "lucide-react";
+import { useGetUserProfile, useUpdateUser } from "@/app/api/auth";
+import { toast } from "react-toastify";
 
 const Settings = () => {
   const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "08123456789",
-    location: "Lagos, Nigeria",
-    storeName: "JohnTech Gadgets",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    storeName: "",
   });
 
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  const { mutateAsync: updateApi, isPending } = useUpdateUser();
+  const { isLoading, data } = useGetUserProfile();
+
+  // ✅ Auto-fill form when data is loaded
+  useEffect(() => {
+    if (data?.user) {
+      const userData = data.user;
+      const store = userData.stores?.[0]; // Get first store if exists
+
+      setUser({
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        location: store?.location || "",
+        storeName: store?.name || "",
+      });
+
+      // Set avatar if exists
+      if (userData.avatar) {
+        setAvatar(userData.avatar);
+      }
+    }
+  }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -23,14 +52,58 @@ const Settings = () => {
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setAvatar(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      setAvatarFile(file);
+      setAvatar(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Updated user:", user);
+
+    try {
+      // Create FormData if you need to upload avatar
+      const formData = new FormData();
+      formData.append("firstName", user.firstName);
+      formData.append("lastName", user.lastName);
+      formData.append("email", user.email);
+      formData.append("phone", user.phone);
+      formData.append("location", user.location);
+      //formData.append("storeName", user.storeName);
+      
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+
+      // If your API expects JSON instead of FormData, use this:
+      const updateData = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        location: user.location,
+        //storeName: user.storeName,
+      };
+
+      await updateApi(updateData); // or formData if using file upload
+      
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile");
+    }
   };
+
+  // Show loading state while fetching user data
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-[60vh]">
+          <Loader2 className="animate-spin text-green-600" size={40} />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -63,7 +136,7 @@ const Settings = () => {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-800">
-              {user.name}
+              {user.firstName} {user.lastName}
             </h3>
             <p className="text-gray-500 text-sm">{user.email}</p>
           </div>
@@ -71,17 +144,33 @@ const Settings = () => {
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-600">
-              Full Name
-            </label>
-            <Input
-              type="text"
-              name="name"
-              value={user.name}
-              onChange={handleChange}
-              className="w-full"
-            />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-600">
+                First Name
+              </label>
+              <Input
+                type="text"
+                name="firstName"
+                value={user.firstName}
+                onChange={handleChange}
+                className="w-full"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-600">
+                Last Name
+              </label>
+              <Input
+                type="text"
+                name="lastName"
+                value={user.lastName}
+                onChange={handleChange}
+                className="w-full"
+                required
+              />
+            </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -94,6 +183,7 @@ const Settings = () => {
                 name="email"
                 value={user.email}
                 onChange={handleChange}
+                required
               />
             </div>
             <div>
@@ -105,6 +195,7 @@ const Settings = () => {
                 name="phone"
                 value={user.phone}
                 onChange={handleChange}
+                placeholder="+234 800 000 0000"
               />
             </div>
           </div>
@@ -118,6 +209,7 @@ const Settings = () => {
               name="location"
               value={user.location}
               onChange={handleChange}
+              placeholder="e.g., Lagos, Nigeria"
             />
           </div>
 
@@ -130,16 +222,27 @@ const Settings = () => {
               name="storeName"
               value={user.storeName}
               onChange={handleChange}
+              placeholder="Your store name"
             />
           </div>
 
           <div className="flex justify-end">
             <Button
               type="submit"
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
+              disabled={isPending}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
             >
-              <Save size={16} />
-              Save Changes
+              {isPending ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Save Changes
+                </>
+              )}
             </Button>
           </div>
         </form>
