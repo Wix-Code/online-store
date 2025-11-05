@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, Send, MoreVertical, ArrowLeft, Loader2 } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Search, Send, MoreVertical, ArrowLeft, Loader2, PaperclipIcon, SmilePlus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import {
   useGetMessages,
   useGetUserConversations,
@@ -21,6 +22,7 @@ const shortMessage = [
 
 const MessagesPage = () => {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ✅ Current logged-in user
   const user =
@@ -32,6 +34,9 @@ const MessagesPage = () => {
   const [selectedChat, setSelectedChat] = useState<any | null>(null);
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [message, setMessage] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // ✅ React Query hooks
   const { data: conversationData, isLoading: convoLoading } = useGetUserConversations(user?.id);
@@ -46,9 +51,47 @@ const MessagesPage = () => {
   const conversations = conversationData?.data?.data || [];
   const messages = messagesData?.data?.messages || [];
 
+  // ✅ Handle file selection
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    setSelectedFiles(prev => [...prev, ...imageFiles]);
+    
+    // Create preview URLs
+    imageFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrls(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // ✅ Remove selected file
+  const handleRemoveFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // ✅ Handle emoji selection
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setMessage(prev => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   // ✅ Handle chat selection
   const handleChatSelect = async (chat: any) => {
     setSelectedChat(chat);
+    setSelectedFiles([]);
+    setPreviewUrls([]);
+    setShowEmojiPicker(false);
+    
     if (chat.id) {
       setConversationId(chat.id);
     } else {
@@ -66,9 +109,12 @@ const MessagesPage = () => {
 
   // ✅ Send message
   const handleSend = async () => {
-    if (!message.trim() || !selectedChat || !conversationId) return;
+    if ((!message.trim() && selectedFiles.length === 0) || !selectedChat || !conversationId) return;
 
     try {
+      // TODO: If you need to upload files, add your file upload logic here
+      // For now, just sending the text message
+      
       await sendMessageApi({
         senderId: user.id,
         receiverId:
@@ -80,6 +126,9 @@ const MessagesPage = () => {
       });
 
       setMessage("");
+      setSelectedFiles([]);
+      setPreviewUrls([]);
+      setShowEmojiPicker(false);
     } catch (err) {
       console.error("Failed to send message", err);
     }
@@ -146,16 +195,11 @@ const MessagesPage = () => {
                       {participant?.firstName} {participant?.lastName}
                     </h3>
                     <p className="text-xs text-gray-500 truncate">
-                      {chat.messages?.[0]?.content || "No messages yet"}
+                      {participant?.message !== chat.messages?.[0]?.content && "You:" } {chat.messages?.[0]?.content || "No messages yet"}
                     </p>
                   </div>
                   <span className="text-[11px] text-gray-400">
-                    {chat.updatedAt
-                      ? new Date(chat.updatedAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : ""}
+                    {formatTimeAgo(chat.updatedAt)}
                   </span>
                 </div>
               );
@@ -244,6 +288,27 @@ const MessagesPage = () => {
 
             {/* Input */}
             <div className="p-3 flex-col border-t border-gray-200 flex items-center gap-2 bg-white">
+              {/* Image Previews */}
+              {previewUrls.length > 0 && (
+                <div className="w-full flex gap-2 flex-wrap pb-2 border-b border-gray-100">
+                  {previewUrls.map((url, idx) => (
+                    <div key={idx} className="relative">
+                      <img
+                        src={url}
+                        alt={`Preview ${idx + 1}`}
+                        className="h-14 w-14 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        onClick={() => handleRemoveFile(idx)}
+                        className="absolute cursor-pointer -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex gap-3 items-center flex-wrap justify-center">
                 {shortMessage.map((text, idx) => (
                   <button
@@ -256,12 +321,43 @@ const MessagesPage = () => {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-2 w-full relative">
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="text-green-500 cursor-pointer hover:text-green-600"
+                  >
+                    <SmilePlus size={24} />
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-green-500 cursor-pointer hover:text-green-600"
+                  >
+                    <PaperclipIcon size={24} />
+                  </button>
+                </div>
+                
+                {/* Emoji Picker */}
+                {showEmojiPicker && (
+                  <div className="absolute bottom-16 left-0 z-50">
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                  </div>
+                )}
+                
                 <input
                   type="text"
                   placeholder="Type your message..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                   className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-sm focus:ring-1 focus:ring-green-400 outline-none"
                 />
                 <button
