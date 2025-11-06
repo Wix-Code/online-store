@@ -1,14 +1,17 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import DashboardLayout from "@/app/components/DashboardLayout";
 import { Edit2, Loader2, Trash2 } from "lucide-react";
 import DeleteModal from "./components/DeleteModal";
-import { useGetMyProducts } from "@/app/api/products";
+import { useDeleteProduct, useGetMyProducts } from "@/app/api/products";
 import { Product } from "@/app/api/products/types";
 
 const Products = () => {
   const { data, isLoading } = useGetMyProducts();
+  const { mutateAsync: deleteApi, isPending } = useDeleteProduct()
+  const [name, setName] = useState<string | null>(null)
 
   const products = data?.products || [];
 
@@ -17,7 +20,7 @@ const Products = () => {
   };
 
   const handleDelete = (id: number) => {
-    console.log("Delete product:", id);
+    deleteApi(id)
   };
 
   if (isLoading) {
@@ -81,7 +84,14 @@ const Products = () => {
                 </button>
 
                 {/* Delete */}
-                <DeleteModal onConfirm={() => handleDelete(product.id)}>
+                <DeleteModal
+                  loading={isPending}
+                  onConfirm={() => {
+                    handleDelete(product.id);
+                    setName(product?.name);
+                  }}
+                  name={name}
+                >
                   <button
                     className="p-2 cursor-pointer rounded-full hover:bg-red-100 transition"
                     title="Delete"

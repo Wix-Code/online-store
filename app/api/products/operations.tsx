@@ -1,7 +1,12 @@
 import { customAxiosInstance } from "@/app/BaseUrl"
 import { CreateProductRequest } from "./types"
 
-const token = localStorage.getItem("token");
+let token: string | null = null;
+
+if (typeof window !== "undefined") {
+  token = localStorage.getItem("token");
+}
+
 
 export const createProduct = async (data: CreateProductRequest) => {
   return await customAxiosInstance.post(`/products`, data)

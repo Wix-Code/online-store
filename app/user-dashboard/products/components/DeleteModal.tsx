@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Popover,
   PopoverTrigger,
@@ -7,17 +7,28 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 const DeleteModal = ({
   children,
   onConfirm,
+  loading,
+  name
 }: {
   children: React.ReactNode;
   onConfirm?: () => void;
+    loading?: boolean;
+    name?: string | undefined
 }) => {
+    const [open, setOpen] = useState(false);
+  
+    const handleDelete = () => {
+      if (onConfirm) onConfirm();
+      setOpen(false); // close modal after delete
+    };
+  
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent
@@ -25,7 +36,7 @@ const DeleteModal = ({
       >
         <DialogHeader className="sr-only">
           <DialogTitle>Delete Modal</DialogTitle>
-          <DialogDescription>Are you sure you want to delete this product?</DialogDescription>
+          <DialogDescription>Are you sure you want to delete <b>{name}</b>?</DialogDescription>
         </DialogHeader>
         {/* Centered Modal Box */}
         <div className="bg-white rounded-lg p-6 shadow-xl space-y-4">
@@ -51,10 +62,15 @@ const DeleteModal = ({
             </Button>
             <Button
               size="sm"
-              className="bg-red-600 flex-1 py-5 cursor-pointer hover:bg-red-700 text-white"
-              onClick={onConfirm}
+              className="bg-red-600 flex-1 flex justify-center items-center py-5 cursor-pointer hover:bg-red-700 text-white"
+              onClick={handleDelete}
+              disabled={loading}
             >
-              Delete
+              {loading ? (
+                <Loader2 className="animate-spin inline-block w-4 h-4 text-gray-100" />
+              ) : (
+                "Delete"
+              )}
             </Button>
           </div>
         </div>

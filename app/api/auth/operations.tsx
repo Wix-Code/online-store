@@ -1,7 +1,11 @@
 import { customAxiosInstance } from "@/app/BaseUrl"
 import { CreateAuthRequest, LoginResponse } from "./types"
 
-const token = localStorage.getItem("token");
+let token: string | null = null;
+
+if (typeof window !== "undefined") {
+  token = localStorage.getItem("token");
+}
 
 export const register = async (data: CreateAuthRequest) => {
   return await customAxiosInstance.post<LoginResponse>(`/auth/register`, data)
