@@ -2,20 +2,33 @@
 import React from "react";
 import Link from "next/link";
 import DashboardLayout from "@/app/components/DashboardLayout";
-import { products } from "@/app/dummyData";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Loader2, Trash2 } from "lucide-react";
 import DeleteModal from "./components/DeleteModal";
+import { useGetMyProducts } from "@/app/api/products";
+import { Product } from "@/app/api/products/types";
 
 const Products = () => {
+  const { data, isLoading } = useGetMyProducts();
+
+  const products = data?.products || [];
+
   const handleEdit = (id: number) => {
     console.log("Edit product:", id);
-    // navigate or open modal to edit
   };
 
   const handleDelete = (id: number) => {
     console.log("Delete product:", id);
-    // handle delete logic here
   };
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="h-[60vh] flex item-center justify-center">
+          <Loader2 className="animate-spin text-green-500 w-10 h-10" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -23,12 +36,16 @@ const Products = () => {
 
       {products.length === 0 ? (
         <div className="text-center flex flex-col items-center justify-center gap-4 mt-10 text-gray-500">
-          <img src="https://assets.jijistatic.net/static/img/profile-redesign/adverts/no-adverts-images/no-adverts-active.svg" alt="" />
-          You have no products listed.
+          <img
+            src="https://assets.jijistatic.net/static/img/profile-redesign/adverts/no-adverts-images/no-adverts-active.svg"
+            alt="No products"
+            className="w-[150px] h-[150px]"
+          />
+          <p>You have no products listed.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
+          {products.map((product: Product) => (
             <div
               key={product.id}
               style={{
@@ -37,7 +54,7 @@ const Products = () => {
               className="p-5 space-y-2 rounded bg-white relative"
             >
               <img
-                src={product.image}
+                src={String(product.imageUrl)}
                 alt={product.name}
                 className="mb-2 h-[200px] w-full object-cover rounded"
               />
@@ -47,27 +64,23 @@ const Products = () => {
                 </h2>
               </Link>
 
-              <div className="flex items-center gap-2">
-                {/* <p className="text-[14px] text-[#555555] font-[600]">
-                  Location:
-                </p> */}
-                <p className="text-[14px] font-[400] text-[#8b8b8b]">
-                  {product.description.slice(0, 30)}...
-                </p>
-              </div>
+              <p className="text-[14px] font-[400] text-[#8b8b8b]">
+                {product.description
+                  ? `${product.description.slice(0, 30)}...`
+                  : "No description"}
+              </p>
 
-              {/* Action buttons */}
               <div className="flex justify-end gap-3 mt-3">
-                <DeleteModal>
-                  <button
-                    onClick={() => handleEdit(product.id)}
-                    className="p-2 cursor-pointer rounded-full hover:bg-green-100 transition"
-                    title="Edit"
-                  >
-                    <Edit2 size={18} className="text-green-600" />
-                  </button>
-                </DeleteModal>
+                {/* Edit */}
+                <button
+                  onClick={() => handleEdit(product.id)}
+                  className="p-2 cursor-pointer rounded-full hover:bg-green-100 transition"
+                  title="Edit"
+                >
+                  <Edit2 size={18} className="text-green-600" />
+                </button>
 
+                {/* Delete */}
                 <DeleteModal onConfirm={() => handleDelete(product.id)}>
                   <button
                     className="p-2 cursor-pointer rounded-full hover:bg-red-100 transition"

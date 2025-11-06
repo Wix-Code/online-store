@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Camera, Save, Loader2 } from "lucide-react";
 import { useGetUserProfile, useUpdateUser } from "@/app/api/auth";
 import { toast } from "react-toastify";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Settings = () => {
   const [user, setUser] = useState({
@@ -16,6 +17,7 @@ const Settings = () => {
     phone: "",
     location: "",
     storeName: "",
+    gender: ""
   });
 
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -37,6 +39,7 @@ const Settings = () => {
         phone: userData.phone || "",
         location: store?.location || "",
         storeName: store?.name || "",
+        gender: userData?.gender || "",
       });
 
       // Set avatar if exists
@@ -62,30 +65,41 @@ const Settings = () => {
     e.preventDefault();
 
     try {
-      // Create FormData if you need to upload avatar
-      const formData = new FormData();
-      formData.append("firstName", user.firstName);
-      formData.append("lastName", user.lastName);
-      formData.append("email", user.email);
-      formData.append("phone", user.phone);
-      formData.append("location", user.location);
-      //formData.append("storeName", user.storeName);
-      
-      if (avatarFile) {
-        formData.append("avatar", avatarFile);
-      }
-
-      // If your API expects JSON instead of FormData, use this:
-      const updateData = {
+      // Build update object with only non-empty values
+      const updateData: any = {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        phone: user.phone,
-        location: user.location,
-        //storeName: user.storeName,
       };
 
-      await updateApi(updateData); // or formData if using file upload
+      // Only add optional fields if they have values
+      if (user.phone && user.phone.trim() !== "") {
+        updateData.phone = user.phone;
+      }
+      if (user.gender && user.gender.trim() !== "") {
+        updateData.gender = user.gender;
+      }
+      if (user.location && user.location.trim() !== "") {
+        updateData.location = user.location;
+      }
+      if (user.storeName && user.storeName.trim() !== "") {
+        updateData.storeName = user.storeName;
+      }
+
+      console.log("Sending payload:", updateData);
+
+      // If you need to upload avatar with FormData
+      if (avatarFile) {
+        const formData = new FormData();
+        // Object.keys(updateData).forEach(key => {
+        //   formData.append(key, updateData[key]);
+        // });
+        // formData.append("avatar", avatarFile);
+        // await updateApi({ ...formData });
+      } else {
+        // Send as JSON
+        await updateApi(updateData);
+      }
       
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -200,17 +214,36 @@ const Settings = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-600">
-              Location
-            </label>
-            <Input
-              type="text"
-              name="location"
-              value={user.location}
-              onChange={handleChange}
-              placeholder="e.g., Lagos, Nigeria"
-            />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-600">
+                Location
+              </label>
+              <Input
+                type="text"
+                name="location"
+                value={user.location}
+                onChange={handleChange}
+                placeholder="e.g., Lagos, Nigeria"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-600" htmlFor="gender">
+                Gender
+              </label>
+              <Select value={user.gender} onValueChange={(value) => setUser({ ...user, gender: value })}>
+                <SelectTrigger className="w-full h-[50px]">
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Gender</SelectLabel>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div>
@@ -225,26 +258,23 @@ const Settings = () => {
               placeholder="Your store name"
             />
           </div>
-
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save size={16} />
-                  Save Changes
-                </>
-              )}
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="flex w-full items-center py-6 cursor-pointer gap-2 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+          >
+            {isPending ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+                Save Changes
+              </>
+            )}
+          </Button>
         </form>
       </div>
     </DashboardLayout>

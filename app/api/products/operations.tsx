@@ -1,6 +1,8 @@
 import { customAxiosInstance } from "@/app/BaseUrl"
 import { CreateProductRequest } from "./types"
 
+const token = localStorage.getItem("token");
+
 export const createProduct = async (data: CreateProductRequest) => {
   return await customAxiosInstance.post(`/products`, data)
 }
@@ -24,6 +26,24 @@ export const updateProduct = async (id: number, data: CreateProductRequest) => {
   return await customAxiosInstance.put(`/products/${id}`, data)
 }
 
-export const deleteProduct = async (id: number, data: CreateProductRequest) => {
-  return await customAxiosInstance.delete(`/products/${id}`, { data })
-}
+export const deleteProduct = async (id: number) => {
+ 
+  const res = await customAxiosInstance.delete(`/products/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
+export const getMyProducts = async () => {
+
+  const res = await customAxiosInstance.get(`/products/my-products`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};

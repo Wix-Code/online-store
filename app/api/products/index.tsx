@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateProductRequest } from "./types";
-import { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct } from "./operations";
+import { createProduct, deleteProduct, getAllProducts, getMyProducts, getProductById, updateProduct } from "./operations";
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
@@ -55,12 +55,18 @@ export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: CreateProductRequest }) =>
-      deleteProduct(id, data),
+    mutationFn: (id: number) => deleteProduct(id),
 
-    // ✅ Invalidate products list after deletion
+    // ✅ Refetch product list after successful deletion
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
+  });
+};
+
+export const useGetMyProducts = () => {
+  return useQuery({
+    queryKey: ["my-products"],
+    queryFn: getMyProducts,
   });
 };
