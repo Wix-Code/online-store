@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import DashboardLayout from "@/app/components/DashboardLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Store, MapPin, Loader2 } from "lucide-react";
-import { useCreateStore, useGetMyStore, useGetStoreById, useUpdateStore } from "@/app/api/stores";
+import { Upload, Store, MapPin, Loader2, X } from "lucide-react";
+import { useCreateStore, useGetMyStore, useUpdateStore } from "@/app/api/stores";
 import { toast } from "react-toastify";
 import { useParams } from "next/navigation";
 import { Stores } from "@/app/api/stores/types";
+import { uploadToCloudinary } from "@/app/uploadImage";
 
 type StoreForm = {
   name: string;
@@ -21,7 +22,9 @@ type StoreForm = {
 
 const EditStore = () => {
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [storeData, setStoreData] = useState<Stores | null>(null);
 
   const createStore = useCreateStore();
@@ -31,9 +34,10 @@ const EditStore = () => {
 
   const { data: storeResponse, isLoading: fetching } = useGetMyStore();
 
-  console.log(storeResponse, "store update now")
+  console.log(storeResponse, "store update now");
 
-  const store = storeResponse?.store
+  const store = storeResponse?.store;
+  
   useEffect(() => {
     if (store) {
       setStoreData(store);
@@ -74,9 +78,28 @@ const EditStore = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+
+      setSelectedFile(file);
       setPreview(URL.createObjectURL(file));
-      setValue("imageUrl", file.name); // You may handle uploads separately
     }
+  };
+
+  // ✅ Remove selected image
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setPreview(null);
+    setValue("imageUrl", "");
   };
 
   const onSubmit = async (data: StoreForm) => {
@@ -87,10 +110,28 @@ const EditStore = () => {
           ? JSON.parse(localStorage.getItem("user-object") || "{}")
           : {};
 
+      let imageUrl = data.imageUrl;
+
+      // ✅ Upload image to Cloudinary if a new file is selected
+      if (selectedFile) {
+        setUploadingImage(true);
+        try {
+          imageUrl = await uploadToCloudinary(selectedFile);
+          toast.success("Image uploaded successfully!");
+        } catch (error: any) {
+          toast.error(error.message || "Failed to upload image");
+          setLoading(false);
+          setUploadingImage(false);
+          return;
+        } finally {
+          setUploadingImage(false);
+        }
+      }
+
       const payload = {
         name: data.name,
         description: data.description,
-        imageUrl: data.imageUrl || "",
+        imageUrl: imageUrl || "",
         location: data.location,
         owner: user?.id || 1,
       };
@@ -98,7 +139,7 @@ const EditStore = () => {
       let response;
       if (storeData?.id) {
         // ✅ Update store
-        response = await updateStore.mutateAsync({id: storeData?.id, ...payload });
+        response = await updateStore.mutateAsync({ id: storeData?.id, ...payload });
         toast.success(response?.data?.message || "Store updated successfully!");
       } else {
         // ✅ Create new store
@@ -109,6 +150,7 @@ const EditStore = () => {
 
       reset();
       setPreview(null);
+      setSelectedFile(null);
     } catch (error: any) {
       console.error(error);
       toast.error(error.response?.data?.error || error.message || "Something went wrong!");
@@ -196,19 +238,39 @@ const EditStore = () => {
 
             <div
               className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 relative"
-              onClick={() => document.getElementById("store-logo")?.click()}
+              onClick={() => !uploadingImage && document.getElementById("store-logo")?.click()}
             >
               {preview ? (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-24 h-24 object-cover rounded-full border"
-                />
+                <div className="relative">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-24 h-24 object-cover rounded-full border"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage();
+                    }}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : uploadingImage ? (
+                <>
+                  <Loader2 className="animate-spin text-green-600 mb-2" size={28} />
+                  <p className="text-sm text-gray-500">Uploading...</p>
+                </>
               ) : (
                 <>
                   <Upload className="text-gray-500 mb-2" size={28} />
                   <p className="text-sm text-gray-500">
                     Click to upload logo
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Max size: 5MB (JPG, PNG, GIF)
                   </p>
                 </>
               )}
@@ -218,7 +280,6 @@ const EditStore = () => {
               id="store-logo"
               type="file"
               accept="image/*"
-              {...register("imageUrl")}
               onChange={handleFileChange}
               className="hidden"
             />
@@ -228,17 +289,21 @@ const EditStore = () => {
           <div className="pt-4">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploadingImage}
               className={`w-full flex cursor-pointer items-center justify-center text-white px-6 py-3 rounded-lg transition ${
-                loading
+                loading || uploadingImage
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-700"
               }`}
             >
-              {loading ? (
+              {loading || uploadingImage ? (
                 <>
                   <Loader2 className="animate-spin mr-2 h-5 w-5" />
-                  {storeData?.id ? "Updating Store..." : "Creating Store..."}
+                  {uploadingImage
+                    ? "Uploading Image..."
+                    : storeData?.id
+                    ? "Updating Store..."
+                    : "Creating Store..."}
                 </>
               ) : storeData?.id ? (
                 "Update Store"

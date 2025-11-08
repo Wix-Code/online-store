@@ -32,7 +32,7 @@ const DeleteModal = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="max-w-[552px] w-full">
+      <DialogContent className="max-w-[400px] w-full">
         <DialogHeader className="sr-only">
           <DialogTitle>Delete Modal</DialogTitle>
           <DialogDescription>Are you sure you want to delete this notification?</DialogDescription>

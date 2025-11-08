@@ -7,9 +7,17 @@ if (typeof window !== "undefined") {
   token = localStorage.getItem("token");
 }
 
+console.log(token, "token")
+
 
 export const createProduct = async (data: CreateProductRequest) => {
-  return await customAxiosInstance.post(`/products`, data)
+  const res = await customAxiosInstance.delete(`/products`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
 }
 
 export const getAllProducts = async ({ pageParam = 1, params }: { pageParam?: number; params: any }) => {
