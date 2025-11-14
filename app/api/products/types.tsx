@@ -2,10 +2,12 @@ export interface Product {
   id: number;
   name: string;
   description: string;
+  location: string;
   price: number;
   storeId: number;
-  imageUrl: string | null;
+  imageUrl: string[];
   categoryId: number;
+  phone: string;
   createdAt: string; 
   updatedAt: string; 
 }
