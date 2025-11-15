@@ -11,9 +11,13 @@ console.log(token, "token")
 
 
 export const createProduct = async (data: CreateProductRequest) => {
+  const token = typeof window !== "undefined"
+    ? localStorage.getItem("token")
+    : null;
+
   const res = await customAxiosInstance.post(
-    `/products`,
-    data, // send product data here
+    "/products",
+    data,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -23,7 +27,6 @@ export const createProduct = async (data: CreateProductRequest) => {
 
   return res.data;
 };
-
 
 export const getAllProducts = async ({ pageParam = 1, params }: { pageParam?: number; params: any }) => {
   const res = await customAxiosInstance.get("/products", {
@@ -37,6 +40,11 @@ export const getAllProducts = async ({ pageParam = 1, params }: { pageParam?: nu
 
 export const getProductById = async (id: number) => {
   const res = await customAxiosInstance.get(`/products/${id}`);
+  return res.data;
+};
+
+export const getRelatedProducts = async (id: number) => {
+  const res = await customAxiosInstance.get(`/products/${id}/related`);
   return res.data;
 };
 

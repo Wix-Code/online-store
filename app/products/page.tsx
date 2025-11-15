@@ -33,10 +33,12 @@ const Page = () => {
     // Later: trigger API filter logic here
   };
 
+  console.log(products, "products")
+
   return (
     <div className="max-w-[1000px] mx-auto">
       {/* ---------- Top Bar ---------- */}
-      <div className="flex border-y bg-[#fdfdfd] py-3 border-[#f5f5f5] items-center mt-5 justify-between">
+      <div className="flex border-y md:px-0 px-5 bg-[#fdfdfd] py-3 border-[#f5f5f5] items-center mt-5 justify-between">
         <p className="text-[20px] font-[600]">Products</p>
         <div className="flex items-center gap-4">
           <p className="text-[12px] text-[#8b8b8b]">
@@ -138,7 +140,7 @@ const Page = () => {
                 key={item.id}
                 id={item.id}
                 price={item.price}
-                image={item.imageUrl}
+                image={item.imageUrl?.[0]}
                 description={item.description}
                 location={item.location}
               />

@@ -34,7 +34,7 @@ const ItemCard = ({ id, description, image, price, location }: Props) => {
         </Link>
 
         <div className="flex items-center justify-between">
-          <p className="text-[14px] text-[#009c6d] font-semibold">₦{price}</p>
+          <p className="text-[14px] text-[#009c6d] font-semibold">₦{price?.toLocaleString()}</p>
 
           {/* Hover Icons */}
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 text-[#555]">
@@ -50,7 +50,7 @@ const ItemCard = ({ id, description, image, price, location }: Props) => {
         {/* Location */}
         <div className="flex items-center gap-1 mt-2 text-[13px] text-gray-600">
           <MapPin className="w-4 h-4 text-[#009c6d]" />
-          <span>Dutse, Abuja FCT</span>
+          <span>{location}</span>
         </div>
       </div>
     </div>

@@ -19,10 +19,16 @@ const Post = () => {
     categoryName: "", // Store name for display
     location: "",
     description: "",
-    contact: "",
     phone: "",
   });
 
+  let token: string | null = null;
+
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token");
+  }
+
+  console.log(token, "token")
   const { mutateAsync: createProductApi, isPending } = useCreateProduct();
 
   const [images, setImages] = useState<File[]>([]);
@@ -81,7 +87,7 @@ const Post = () => {
     e.preventDefault();
 
     // Validate form
-    if (!product.name || !product.price || !product.categoryId || !product.location || !product.contact || !product.description) {
+    if (!product.name || !product.price || !product.categoryId || !product.location || !product.phone || !product.description) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -122,11 +128,10 @@ const Post = () => {
       const productData = {
         name: product.name,
         price: parseFloat(product.price),
-        categoryId: product.categoryId, // Send categoryId to API
+        categoryId: Number(product.categoryId), // Send categoryId to API
         location: product.location,
         description: product.description,
-        contact: product.contact,
-        //images: imageUrls,
+        phone: product.phone,
         imageUrl: imageUrls,
         storeId: user?.stores?.[0]?.id || null,
         userId: user?.id || null,
@@ -144,7 +149,6 @@ const Post = () => {
         categoryName: "",
         location: "",
         description: "",
-        contact: "",
         phone: ""
       });
       setImages([]);
@@ -158,6 +162,9 @@ const Post = () => {
       setUploadProgress("");
     }
   };
+
+  console.log(token, "token")
+  console.log("We are good")
 
   const isSubmitting = isPending || uploadingImages;
 
@@ -287,7 +294,7 @@ const Post = () => {
             <Input
               type="tel"
               name="contact"
-              value={product.contact}
+              value={product.phone}
               onChange={handleChange}
               placeholder="e.g. 08123456789"
               required

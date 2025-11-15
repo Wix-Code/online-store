@@ -1,15 +1,14 @@
 export interface Product {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
   description: string;
-  location: string;
-  price: number;
-  storeId: number;
-  imageUrl: string[];
-  categoryId: number;
-  phone: string;
-  createdAt: string; 
-  updatedAt: string; 
+  location?: string;
+  price?: number;
+  imageUrl?: string[];
+  phone?: string;
+  category: string;
+  createdAt?: string; 
+  updatedAt?: string; 
 }
 
 export interface Pagination {
@@ -38,7 +37,8 @@ export interface CreateProductRequest {
   imageUrl: string[];
   price: number;
   location: string;
-  owner: number;   // userId of the owner
   storeId: number;
-  category: string; // category name (could also be categoryId depending on schema)
+  categoryId?: number;
+  userId?: number;
+  phone?: string;
 }

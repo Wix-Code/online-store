@@ -133,7 +133,7 @@ const Page = ({ params }: Props) => {
               >
                 <div className="relative">
                   <img
-                    src={item.imageUrl}
+                    src={item.imageUrl?.[0]}
                     alt={item.name}
                     className="w-full h-[220px] sm:h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
                   />

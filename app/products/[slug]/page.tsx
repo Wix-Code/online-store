@@ -1,39 +1,100 @@
 "use client";
 
-import { useGetProductById } from "@/app/api/products";
+import { useGetProductById, useGetRelatedProducts } from "@/app/api/products";
 import ItemCard from "@/app/components/ItemCard";
 import { products } from "@/app/dummyData";
-import { CameraIcon, ChevronLeft, ChevronRight, Eye, Heart, MapPin } from "lucide-react";
-import { useState, use } from "react";
-import { FaWhatsapp } from "react-icons/fa";
+import { CameraIcon, ChevronLeft, ChevronRight, Eye, Heart, Loader2, MapPin, X } from "lucide-react";
+import { useState, use, useEffect, useMemo } from "react";
+import { FaPhoneAlt, FaTimes, FaWhatsapp } from "react-icons/fa";
+import { FaRegMessage } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
+import { formatTimeAgo } from "@/app/components/format";
+import Link from "next/link";
+import { slugify } from "@/app/components/CardItem";
+import { useGetUserConversations, useSendMessage } from "@/app/api/messages";
 
 export default function SingleItem({ params }: { params: Promise<{ slug: string }> }) {
+
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}")
+      : {};
+  
   const resolvedParams = use(params);
   const [showContact, setShowContact] = useState(false);
+  const [message, setMessage] = useState("");
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [mainSwiper, setMainSwiper] = useState<any>(null);
+  const [startChat, setStartChat] = useState(false);
 
   const productId = Number(resolvedParams.slug.split("-")[0]);
   const { data, isLoading, error } = useGetProductById(productId);
+  const { data: related } = useGetRelatedProducts(productId);
 
-  if (isLoading) return <p className="text-center">Loading...</p>;
+  const { mutateAsync: sendMessgaeApi, isPending } = useSendMessage();
+  const { data: conversation, isLoading: loading } = useGetUserConversations(user?.id);
+  
+  const conversationData = conversation?.data?.data;
+
+  console.log(conversation, "conversation");
+
+  const product = data?.product;
+
+  // Find existing conversation with the store owner
+  const existingConversation = useMemo(() => {
+    if (!conversationData || !product?.store?.ownerId) return null;
+    
+    return conversationData.find((conv: any) => 
+      (conv.buyerId === user?.id && conv.sellerId === product.store.ownerId) ||
+      (conv.sellerId === user?.id && conv.buyerId === product.store.ownerId)
+    );
+  }, [conversationData, product?.store?.ownerId, user?.id]);
+
+  console.log(existingConversation, "existing conversation");
+  
+  const sendMessage = async () => {
+    if (!message.trim()) {
+      alert("Please enter a message");
+      return;
+    }
+
+    if (!user?.id) {
+      alert("Please login to send a message");
+      return;
+    }
+
+    try {
+      // Use existing conversation ID or create a new conversation
+      const conversationId = existingConversation?.id;
+
+      await sendMessgaeApi({
+        conversationId: conversationId || undefined, // Backend should handle creating new conversation if undefined
+        content: message,
+        senderId: user?.id,
+        receiverId: product?.store?.ownerId
+      });
+
+      setMessage("");
+      alert("Message sent successfully!");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
+    }
+  };
+  
+  console.log(related, "related products");
+  const relatedProducts = related?.data;
+
+  if (isLoading) return <div className="flex justify-center items-center h-screen">
+    <Loader2 className="animate-spin text-green-600 w-14 h-14" />
+  </div>;
+  
   if (error || !data) return <p className="text-center text-red-500">Product not found</p>;
 
-  const product = data.product;
-
-  const images = [
-    product.imageUrl || "/placeholder.png",
-    "https://pictures-nigeria.jijistatic.net/181275610_MzAwLTQwMC0wNzAwZTlhYWFh.webp",
-    "https://pictures-nigeria.jijistatic.net/181275610_MzAwLTQwMC0wNzAwZTlhYWFh.webp",
-    "https://pictures-nigeria.jijistatic.net/181275610_MzAwLTQwMC0wNzAwZTlhYWFh.webp",
-    "https://pictures-nigeria.jijistatic.net/181275610_MzAwLTQwMC0wNzAwZTlhYWFh.webp",
-  ];
+  console.log(product, "products");
 
   return (
     <div className="p-4 sm:p-6">
@@ -49,7 +110,7 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
               thumbs={{ swiper: thumbsSwiper }}
               className="mb-3 rounded-md"
             >
-              {images.map((img, index) => (
+              {product?.imageUrl?.map((img: string, index: number) => (
                 <SwiperSlide key={index}>
                   <div className="relative">
                     <img
@@ -58,7 +119,7 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
                       alt={product.name}
                     />
                     <p className="w-10 h-7 text-[14px] justify-center gap-1 text-gray-800 flex items-center shadow-md bg-[#ffffff] top-1 left-1 absolute">
-                      <CameraIcon size={16} /> {images.length}
+                      <CameraIcon size={16} /> {product?.imageUrl?.length}
                     </p>
                   </div>
                 </SwiperSlide>
@@ -89,7 +150,7 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
             watchSlidesProgress
             className="flex justify-center sm:justify-start my-2 gap-2 sm:gap-3"
           >
-            {images.map((img, index) => (
+            {product?.imageUrl?.map((img: string, index: number) => (
               <SwiperSlide key={index} className="!w-auto">
                 <img
                   className={`w-[120px] sm:w-[150px] md:w-[180px] h-[120px] sm:h-[150px] md:h-[180px] object-cover rounded-md cursor-pointer border-2 ${
@@ -151,36 +212,41 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
               </button>
               {showContact && (
                 <a href={`tel:${"08126829146"}`} className="text-[16px] text-[#555555] font-[400]">
-                  08126829146
+                  {product?.phone}
                 </a>
               )}
             </div>
           </div>
 
           {/* Related Products */}
-          <div className="mb-6 mt-10">
-            <p className="font-[600] text-[20px] sm:text-[24px] md:text-[28px] mb-6 border-y border-[#e0e0e0] w-fit pb-1">
-              Related Products
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
-              {products.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  id={item.id}
-                  price={item.price}
-                  image={item.image}
-                  description={item.description}
-                />
-              ))}
-            </div>
-          </div>
+          {
+            relatedProducts && (
+              <div className="mb-6 mt-10">
+                <p className="font-[600] text-[20px] sm:text-[24px] md:text-[28px] mb-6 border-y border-[#e0e0e0] w-fit pb-1">
+                  Related Products
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+                  {relatedProducts?.map((item: any) => (
+                    <ItemCard
+                      key={item.id}
+                      id={item.id}
+                      price={item.price}
+                      image={item.imageUrl?.[0]}
+                      description={item.description}
+                      location={item.location}
+                    />
+                  ))}
+                </div>
+              </div>
+            )
+          }
         </div>
 
         {/* Right Section */}
         <div className="flex-[30%] w-full lg:w-auto space-y-4">
           <div className="w-full bg-[#fafafa] border flex flex-col space-y-2 p-4 border-[#f5f5f5] rounded-md">
             <p className="text-[26px] sm:text-[28px] text-[#009c6dfa] font-[600]">
-              ₦{product.price.toLocaleString()}
+              ₦{product?.price?.toLocaleString()}
             </p>
           </div>
 
@@ -193,8 +259,13 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzBzvBsz2tDOPYmPViLHh1avwrDCrQs2NX2Q&s"
               alt="Store Name"
             />
-            <p className="text-[15px] sm:text-[16px] font-[600]">Ugo Farms</p>
-            <p className="text-[12px] font-[400]">6y 1m on Jiji</p>
+            <Link 
+              href={`/stores/${product?.store?.id}-${slugify(product?.store?.name)}`}
+              className="text-[15px] sm:text-[16px] font-[600] hover:text-green-600 transition-colors cursor-pointer"
+            >
+              {product?.store?.name}
+            </Link>
+            <p className="text-[12px] font-[400]">{formatTimeAgo(product?.store?.createdAt)} on Jiji</p>
             <div className="space-y-2 w-full">
               <a
                 href="https://wa.me/2348125352020"
@@ -206,12 +277,56 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
                 Chat Vendor
               </a>
               <a
-                href="tel:08125352020"
+                href={`tel:${product?.phone}`}
                 className="w-full h-[46px] gap-2 rounded-[8px] bg-green-500 flex items-center justify-center text-white hover:bg-green-600 transition"
               >
-                <FaWhatsapp className="text-[20px]" />
+                <FaPhoneAlt className="text-[20px]" />
                 Call Vendor
               </a>
+              <button
+                onClick={() => setStartChat(true)}
+                disabled={loading}
+                className="w-full h-[46px] gap-2 rounded-[8px] bg-green-500 flex items-center justify-center text-white cursor-pointer hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                <FaRegMessage className="text-[20px]" />
+                {loading ? "Loading..." : "Start Chat"}
+              </button>
+              {
+                startChat && (
+                  <div className="border border-gray-200 rounded-md p-3 bg-white">
+                    <div className="justify-between mb-[8px] flex items-center">
+                      <p className="text-[14px] font-[600]">Your message</p>
+                      <button 
+                        className="cursor-pointer hover:bg-gray-100 p-[10px] rounded-full" 
+                        onClick={() => {
+                          setStartChat(false);
+                          setMessage("");
+                        }}
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+                    <textarea 
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)} 
+                      placeholder="Type your message here..."
+                      className="w-full text-[14px] text-gray-800 resize-none outline-none border-[1px] px-[10px] py-[10px] border-green-500 rounded-md min-h-[100px]"
+                    />
+                    <button 
+                      onClick={sendMessage}
+                      disabled={isPending || !message.trim()}
+                      className="bg-green-500 w-full text-white mt-[8px] cursor-pointer p-[10px] rounded-md hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {isPending ? "Sending..." : "Send Message"}
+                    </button>
+                    {existingConversation && (
+                      <p className="text-[12px] text-gray-500 mt-2 text-center">
+                        Continue existing conversation
+                      </p>
+                    )}
+                  </div>
+                )
+              }
             </div>
           </div>
 
