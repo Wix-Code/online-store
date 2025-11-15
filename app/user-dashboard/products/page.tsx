@@ -53,7 +53,7 @@ const Products = () => {
               className="p-5 space-y-2 rounded bg-white relative"
             >
               <img
-                src={String(product.imageUrl)}
+                src={String(product.imageUrl?.[0])}
                 alt={product.name}
                 className="mb-2 h-[200px] w-full object-cover rounded"
               />
