@@ -3,6 +3,8 @@ export interface CreateAuthRequest {
   firstName?: string,
   lastName?: string,
   password?: string
+  gender?: string
+  phone?: string
 }
 
 export interface LoginResponse {

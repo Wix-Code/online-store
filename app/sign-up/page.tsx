@@ -15,6 +15,8 @@ const SignupPage = () => {
     lastName: "",
     email: "",
     password: "",
+    gender: "",
+    phone: "",
   });
 
   const registerApi = useRegisterUser()
@@ -30,7 +32,9 @@ const SignupPage = () => {
       firstName: formData.firstName,
       lastName: formData.lastName,
       password: formData.password,
-      email: formData.email
+      email: formData.email,
+      phone: formData.phone,
+      gender: formData.gender
     })
 
     console.log("Signup details:", register);
@@ -93,6 +97,36 @@ const SignupPage = () => {
               name="lastName"
               placeholder="John Doe"
               value={formData.lastName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              name="gender"
+              placeholder="Gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Phone
+            </label>
+            <input
+              type="text"
+              name="phone"
+              placeholder="+2348126892083"
+              value={formData.phone}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-green-500"
               required
