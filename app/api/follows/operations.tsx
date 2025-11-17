@@ -2,8 +2,22 @@ import { customAxiosInstance } from "@/app/BaseUrl"
 import { FollowRequest, GetFollowingResponse } from "./types"
 
 export const followUser = async (data: FollowRequest) => {
-  return await customAxiosInstance.post(`/follow/follow-user`, data)
-  //return res.data
+  const token = typeof window !== "undefined"
+    ? localStorage.getItem("token")
+    : null;
+  
+  console.log(token, "token")
+  const res = await customAxiosInstance.post(
+    "/follow/follow-user",
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
 }
 
 export const unFollowUser = async (data: FollowRequest) => {

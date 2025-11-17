@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import LocationFilter from "../components/stores/LocationFilter";
 import SearchInput from "../components/SearchInput";
 import SortFilter from "../components/SortFilter";
@@ -32,17 +32,8 @@ const Page = () => {
 
       {/* Loading State */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="p-4 space-y-2 rounded-lg animate-pulse border border-gray-200 bg-gray-50"
-            >
-              <div className="h-[180px] bg-gray-200 rounded-md" />
-              <div className="h-4 w-3/4 bg-gray-200 rounded" />
-              <div className="h-4 w-1/2 bg-gray-200 rounded" />
-            </div>
-          ))}
+        <div className="flex items-center justify-center h-[60vh]">
+          <Loader2 className="animate-spin text-green-600" size={60} />
         </div>
       ) : stores.length === 0 ? (
         // Empty State

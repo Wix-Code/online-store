@@ -3,11 +3,14 @@
 import { useGetStoreById } from "@/app/api/stores";
 import SearchInput from "@/app/components/SearchInput";
 import SortFilter from "@/app/components/SortFilter";
-import { Heart, MapPin, Package, ZoomIn } from "lucide-react";
+import { Heart, MapPin, Loader2, Package, ZoomIn } from "lucide-react";
 import { FaWhatsapp, FaStore } from "react-icons/fa";
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { slugify } from "@/app/components/CardItem";
 import Link from "next/link";
+import { useFollowUser } from "@/app/api/follows";
+import { formatTimeAgo } from "@/app/components/format";
+import { toast } from "react-toastify";
 
 type Props = {
   params: Promise<{
@@ -16,44 +19,22 @@ type Props = {
 };
 
 const Page = ({ params }: Props) => {
+  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
+  const [isFollowing, setIsFollowing] = useState(false);
+
   const resolvedParams = use(params);
   const storeId = Number(resolvedParams.slug.split("-")[0]);
 
   const { data, isLoading, error } = useGetStoreById(storeId);
+  const {mutateAsync: followApi, isPending } = useFollowUser()
+
+  console.log(data, "data")
 
   // 🔹 Skeleton Loader (while fetching store)
   if (isLoading) {
     return (
-      <div className="max-w-[1000px] mt-8 m-auto space-y-6 animate-pulse px-4">
-        {/* Header Skeleton */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="h-10 w-full sm:w-[400px] bg-gray-200 rounded" />
-          <div className="h-10 w-full sm:w-[120px] bg-gray-200 rounded" />
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Skeleton */}
-          <div className="flex-[25%] space-y-4 w-full lg:w-auto">
-            <div className="h-[200px] bg-gray-200 rounded" />
-            <div className="h-10 bg-gray-200 rounded" />
-            <div className="h-10 bg-gray-200 rounded" />
-            <div className="h-24 bg-gray-200 rounded" />
-          </div>
-
-          {/* Products Grid Skeleton */}
-          <div className="flex-[75%] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 w-full">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="p-4 border border-gray-200 rounded space-y-2"
-              >
-                <div className="h-[180px] bg-gray-200 rounded" />
-                <div className="h-4 w-3/4 bg-gray-200 rounded" />
-                <div className="h-4 w-1/2 bg-gray-200 rounded" />
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="flex items-center justify-center h-[60vh]">
+        <Loader2 className="animate-spin text-green-600" size={60} />
       </div>
     );
   }
@@ -64,8 +45,30 @@ const Page = ({ params }: Props) => {
 
   const store = data.store;
 
+  console.log(store.ownerId, "store owner id")
+  console.log(user?.id, "user id")
+
+  const handleFollow = async () => {
+    try {
+      const res = await followApi({
+        //followerId: Number(user?.id),
+        userId: Number(store?.ownerId)  // Uncomment if needed
+      });
+
+      console.log("Follow user:", user?.id);
+      console.log("API response:", res);
+      setIsFollowing(true)
+      toast.success(res.data.message);
+    } catch (error: any) {
+      console.error("Follow error:", error);
+      setIsFollowing(false)
+      toast.error(error?.message || "Something went wrong");
+    }
+  };
+  console.log(store, "store")
+
   return (
-    <div className="max-w-[1100px] mt-8 space-y-6 m-auto px-4">
+    <div className="max-w-[1100px] my-8 space-y-6 m-auto px-4">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <SearchInput onChange={() => {}} value="" className="w-full sm:w-[400px]" />
         <div className="w-full sm:w-auto">
@@ -88,7 +91,7 @@ const Page = ({ params }: Props) => {
             <p className="text-[18px] font-[700] text-gray-800 flex items-center gap-2 text-center">
               <FaStore className="text-green-600" /> {store.name}
             </p>
-            <p className="text-[13px] text-gray-500 font-[400]">6y 1m on Jiji</p>
+            <p className="text-[13px] text-gray-500 font-[400]">{formatTimeAgo(store?.createdAt)}</p>
           </div>
 
           {/* Contact Buttons */}
@@ -120,6 +123,18 @@ const Page = ({ params }: Props) => {
             <p className="text-[14px] text-gray-600 leading-relaxed">
               {store.description || "This vendor provides fresh and organic farm produce."}
             </p>
+          </div>
+          <div>
+            <button
+              onClick={handleFollow}
+              className="w-full flex justify-center items-center h-[46px] rounded-[8px] bg-green-600 text-white"
+            >
+              {isPending ? (
+                <Loader2 className="animate-spin w-4 h-4" />
+              ) : (
+                isFollowing ? "Following" : "Follow"
+              )}
+            </button>
           </div>
         </div>
 

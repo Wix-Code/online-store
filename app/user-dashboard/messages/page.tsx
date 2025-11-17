@@ -49,6 +49,7 @@ const MessagesPage = () => {
   );
 
   console.log(messagesData, "conversation")
+  console.log(conversationData, "conversation data")
   const conversations = conversationData?.data?.data || [];
   const messages = messagesData?.data?.messages || [];
 

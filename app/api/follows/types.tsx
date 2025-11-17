@@ -1,6 +1,7 @@
 export interface FollowRequest {
-  followerId: number,
-  followingId: number
+  followerId?: number,
+  followingId?: number,
+  userId?: number
 }
 
 export interface FollowingUser {
