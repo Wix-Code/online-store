@@ -15,7 +15,7 @@ import "swiper/css/thumbs";
 import { formatTimeAgo } from "@/app/components/format";
 import Link from "next/link";
 import { slugify } from "@/app/components/CardItem";
-import { useGetUserConversations, useSendMessage } from "@/app/api/messages";
+import { useGetUserConversations, useSendMessage, useSendConversation } from "@/app/api/messages";
 
 export default function SingleItem({ params }: { params: Promise<{ slug: string }> }) {
 
@@ -35,6 +35,7 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
   const { data: related } = useGetRelatedProducts(productId);
 
   const { mutateAsync: sendMessgaeApi, isPending } = useSendMessage();
+  const { mutateAsync: createConversationApi, isPending: isCreating } = useSendConversation();
   const { data: conversation, isLoading: loading } = useGetUserConversations(user?.id);
   
   const conversationData = conversation?.data?.data;
@@ -67,17 +68,27 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
     }
 
     try {
-      // Use existing conversation ID or create a new conversation
-      const conversationId = existingConversation?.id;
+      let conversationId = existingConversation?.id;
 
+      // If no existing conversation, create one first
+      if (!conversationId) {
+        const res = await createConversationApi({
+          buyerId: user.id,
+          sellerId: product?.store?.ownerId,
+        });
+        conversationId = res.data.id;
+      }
+
+      // Now send the message with the conversation ID
       await sendMessgaeApi({
-        conversationId: conversationId || undefined, // Backend should handle creating new conversation if undefined
+        conversationId: conversationId || existingConversation?.id,
         content: message,
         senderId: user?.id,
         receiverId: product?.store?.ownerId
       });
 
       setMessage("");
+      setStartChat(false);
       alert("Message sent successfully!");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -285,11 +296,11 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
               </a>
               <button
                 onClick={() => setStartChat(true)}
-                disabled={loading}
+                disabled={loading || isCreating}
                 className="w-full h-[46px] gap-2 rounded-[8px] bg-green-500 flex items-center justify-center text-white cursor-pointer hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <FaRegMessage className="text-[20px]" />
-                {loading ? "Loading..." : "Start Chat"}
+                {loading ? "Loading..." : isCreating ? "Creating..." : "Start Chat"}
               </button>
               {
                 startChat && (
@@ -314,10 +325,10 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
                     />
                     <button 
                       onClick={sendMessage}
-                      disabled={isPending || !message.trim()}
+                      disabled={isPending || isCreating || !message.trim()}
                       className="bg-green-500 w-full text-white mt-[8px] cursor-pointer p-[10px] rounded-md hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
-                      {isPending ? "Sending..." : "Send Message"}
+                      {isPending || isCreating ? "Sending..." : "Send Message"}
                     </button>
                     {existingConversation && (
                       <p className="text-[12px] text-gray-500 mt-2 text-center">

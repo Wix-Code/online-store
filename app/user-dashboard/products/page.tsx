@@ -82,7 +82,7 @@ const Products = () => {
                 {/* Delete */}
                 <DeleteModal
                   loading={isPending}
-                  onConfirm={() => handleDelete(product.id)}
+                  onConfirm={() => handleDelete(Number(product.id))}
                 >
                   <button
                     className="p-2 cursor-pointer rounded-full hover:bg-red-100 transition"
