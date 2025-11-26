@@ -5,32 +5,52 @@ import SearchInput from "@/app/components/SearchInput";
 import SortFilter from "@/app/components/SortFilter";
 import { Heart, MapPin, Loader2, Package, ZoomIn } from "lucide-react";
 import { FaWhatsapp, FaStore } from "react-icons/fa";
-import React, { use, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import { slugify } from "@/app/components/CardItem";
 import Link from "next/link";
-import { useFollowUser } from "@/app/api/follows";
+import { useFollowUser, useUnfollowUser } from "@/app/api/follows";
 import { formatTimeAgo } from "@/app/components/format";
 import { toast } from "react-toastify";
 
 type Props = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
 
 const Page = ({ params }: Props) => {
-  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user-object") || "{}")
+      : {};
+
   const [isFollowing, setIsFollowing] = useState(false);
 
   const resolvedParams = use(params);
   const storeId = Number(resolvedParams.slug.split("-")[0]);
 
   const { data, isLoading, error } = useGetStoreById(storeId);
-  const {mutateAsync: followApi, isPending } = useFollowUser()
 
-  console.log(data, "data")
+  const {
+    mutateAsync: followApi,
+    isPending: followLoading,
+  } = useFollowUser();
 
-  // 🔹 Skeleton Loader (while fetching store)
+  console.log(data, "store data")
+
+  const {
+    mutateAsync: unFollowApi,
+    isPending: unFollowLoading,
+  } = useUnfollowUser();
+
+  // ====== Detect follow status when store loads ======
+  useEffect(() => {
+    if (data?.store?.followers && user?.id) {
+      const isUserFollowing = data.store.followers.some(
+        (f: any) => f.followerId === user.id
+      );
+      setIsFollowing(isUserFollowing);
+    }
+  }, [data, user]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
@@ -45,32 +65,41 @@ const Page = ({ params }: Props) => {
 
   const store = data.store;
 
-  console.log(store.ownerId, "store owner id")
-  console.log(user?.id, "user id")
-
   const handleFollow = async () => {
     try {
       const res = await followApi({
-        //followerId: Number(user?.id),
-        userId: Number(store?.ownerId)  // Uncomment if needed
+        userId: Number(store.ownerId), // Only target userId
       });
 
-      console.log("Follow user:", user?.id);
-      console.log("API response:", res);
-      setIsFollowing(true)
-      toast.success(res.data.message);
+      setIsFollowing(true);
+      toast.success(res.message || "Followed successfully");
     } catch (error: any) {
-      console.error("Follow error:", error);
-      setIsFollowing(false)
-      toast.error(error?.message || "Something went wrong");
+      toast.error(error?.response?.data?.error || "Unable to follow user");
     }
   };
-  console.log(store, "store")
+
+  const handleUnFollow = async () => {
+    try {
+      const res = await unFollowApi({
+        followingId: Number(store.ownerId),
+        followerId: Number(user?.id),
+      });
+
+      setIsFollowing(false);
+      toast.success(res?.data.message || "Unfollowed successfully");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || "Unable to unfollow user");
+    }
+  };
 
   return (
     <div className="max-w-[1100px] my-8 space-y-6 m-auto px-4">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <SearchInput onChange={() => {}} value="" className="w-full sm:w-[400px]" />
+        <SearchInput
+          onChange={() => {}}
+          value=""
+          className="w-full sm:w-[400px]"
+        />
         <div className="w-full sm:w-auto">
           <SortFilter />
         </div>
@@ -91,7 +120,9 @@ const Page = ({ params }: Props) => {
             <p className="text-[18px] font-[700] text-gray-800 flex items-center gap-2 text-center">
               <FaStore className="text-green-600" /> {store.name}
             </p>
-            <p className="text-[13px] text-gray-500 font-[400]">{formatTimeAgo(store?.createdAt)}</p>
+            <p className="text-[13px] text-gray-500 font-[400]">
+              {formatTimeAgo(store?.createdAt)}
+            </p>
           </div>
 
           {/* Contact Buttons */}
@@ -121,24 +152,29 @@ const Page = ({ params }: Props) => {
           >
             <p className="text-[16px] font-[600] text-gray-800">About Seller</p>
             <p className="text-[14px] text-gray-600 leading-relaxed">
-              {store.description || "This vendor provides fresh and organic farm produce."}
+              {store.description ||
+                "This vendor provides fresh and organic farm produce."}
             </p>
           </div>
-          <div>
+
+          {/* FOLLOW / UNFOLLOW BUTTON */}
+          { user.id !== data?.store?.ownerId && (<div>
             <button
-              onClick={handleFollow}
-              className="w-full flex justify-center items-center h-[46px] rounded-[8px] bg-green-600 text-white"
+              onClick={isFollowing ? handleUnFollow : handleFollow}
+              className="w-full flex cursor-pointer hover:bg-green-700 justify-center items-center h-[46px] rounded-[8px] bg-green-600 text-white"
             >
-              {isPending ? (
+              {followLoading || unFollowLoading ? (
                 <Loader2 className="animate-spin w-4 h-4" />
+              ) : isFollowing ? (
+                "Unfollow"
               ) : (
-                isFollowing ? "Following" : "Follow"
+                "Follow"
               )}
             </button>
-          </div>
+          </div>)}
         </div>
 
-        {/* Products Grid */}
+        {/* Product Grid */}
         <div className="flex-[75%] w-full">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
             {store.products.map((item: any) => (
@@ -186,7 +222,6 @@ const Page = ({ params }: Props) => {
             ))}
           </div>
 
-          {/* Empty State */}
           {store.products.length === 0 && (
             <div className="text-center py-16 text-gray-500 flex flex-col items-center justify-center">
               <Package className="w-12 h-12 text-gray-400 mb-3" />

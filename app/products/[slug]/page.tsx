@@ -294,16 +294,16 @@ export default function SingleItem({ params }: { params: Promise<{ slug: string 
                 <FaPhoneAlt className="text-[20px]" />
                 Call Vendor
               </a>
-              <button
+              {startChat && user.id !== product?.store?.ownerId && (<button
                 onClick={() => setStartChat(true)}
                 disabled={loading || isCreating}
                 className="w-full h-[46px] gap-2 rounded-[8px] bg-green-500 flex items-center justify-center text-white cursor-pointer hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <FaRegMessage className="text-[20px]" />
                 {loading ? "Loading..." : isCreating ? "Creating..." : "Start Chat"}
-              </button>
+              </button>)}
               {
-                startChat && (
+                startChat && user.id !== product?.store?.ownerId && (
                   <div className="border border-gray-200 rounded-md p-3 bg-white">
                     <div className="justify-between mb-[8px] flex items-center">
                       <p className="text-[14px] font-[600]">Your message</p>
