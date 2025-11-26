@@ -122,7 +122,7 @@ const NavBar = () => {
                   >
                     <Settings size={18} /> Settings
                   </Link>
-                  <button onClick={logout} className="flex items-center gap-3 w-full text-left hover:text-green-600">
+                  <button onClick={logout} className="flex cursor-pointer items-center gap-3 w-full text-left hover:text-green-600">
                     <LogOut size={18} /> Logout
                   </button>
                 </div>
