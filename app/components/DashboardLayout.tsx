@@ -12,6 +12,7 @@ import {
   Bell,
   MessageSquare,
   Loader2,
+  Bookmark,
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -72,6 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: "/user-dashboard/followers", label: "Followers", icon: Users },
     { href: "/user-dashboard/notifications", label: "Notifications", icon: Bell },
     { href: "/user-dashboard/messages", label: "Messages", icon: MessageSquare },
+    { href: "/user-dashboard/saved-products", label: "Saved Products", icon: Bookmark },
   ];
 
   return (

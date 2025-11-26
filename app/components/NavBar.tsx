@@ -13,6 +13,7 @@ import {
   UserPlus,
   List,
   X,
+  Bookmark,
 } from "lucide-react";
 import { navLinks } from "../dummyData";
 import { motion, AnimatePresence } from "framer-motion";
@@ -78,6 +79,16 @@ const NavBar = () => {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-3">
+          {/* Messages */}
+          <Link href="/user-dashboard/messages" className="relative w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
+            <Bookmark className="text-gray-700" size={22} />
+            {unreadMessages > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
+                {unreadMessages}
+              </span>
+            )}
+          </Link>
+
           {/* Messages */}
           <Link href="/user-dashboard/messages" className="relative w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
             <MessageSquare className="text-gray-700" size={22} />
