@@ -18,6 +18,7 @@ import {
 import { navLinks } from "../dummyData";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetNotificationsByUserId } from "../api/notifications";
+import { useGetSavedProducts } from "../api/savedProducts";
 
 const NavBar = () => {
   const pathname = usePathname();
@@ -25,6 +26,9 @@ const NavBar = () => {
 
   const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user-object") || "{}") : {};
   const { data, isLoading  } = useGetNotificationsByUserId(user?.id)
+  const { data: dataSaved } = useGetSavedProducts(user?.id)
+  
+  const saved = dataSaved?.data
   
   const unReadNotifications = data?.data?.unreadCount ?? 0
 
@@ -82,9 +86,9 @@ const NavBar = () => {
           {/* Messages */}
           <Link href="/user-dashboard/messages" className="relative w-[40px] h-[40px] bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition">
             <Bookmark className="text-gray-700" size={22} />
-            {unreadMessages > 0 && (
+            {saved && saved?.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
-                {unreadMessages}
+                {saved?.length}
               </span>
             )}
           </Link>

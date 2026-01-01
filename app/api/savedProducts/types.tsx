@@ -1,10 +1,14 @@
 export interface savedProductsRequest {
-  productId: number
+  productId?: number;
+  page?: number;
+  limit?: number;
+
 }
 
 export interface SavedProductsResponse {
-  count: number;
-  savedProducts: SavedProduct[];
+  success: boolean;
+  data: SavedProduct[];
+  pagination: Pagination;
 }
 
 export interface SavedProduct {
@@ -34,18 +38,21 @@ export interface Product {
 export interface Store {
   id: number;
   name: string;
-  description: string;
   imageUrl: string;
   location: string;
-  ownerId: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface Category {
   id: number;
   name: string;
   img: string | null;
-  createdAt: string;
-  updatedAt: string;
+}
+
+export interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
